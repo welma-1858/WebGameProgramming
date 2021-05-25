@@ -1,0 +1,26 @@
+淺淺綠f2feff
+小字的藍84ACA9
+小字的灰425452
+小字的棕796A56
+湖水綠84afae
+丈青84AEAD
+棕766958
+
+
+
+
+<!-- TW City Selector -->       
+    <script src="js/jquery.twzipcode.min.js"></script>
+    <script>
+$("#zipcode3").twzipcode({
+"zipcodeIntoDistrict": true,
+"css": ["city form-control form-control-lg d-block", "town form-control form-control-lg d-block"],
+"countyName": "city", // 指定城市 select name
+"districtName": "town" // 指定地區 select name
+});
+</script>
+
+
+<a class="navbar-brand js-scroll-trigger" href="#top">
+	<img src="img/logo.jpg" class="img-fluid">
+</a>
