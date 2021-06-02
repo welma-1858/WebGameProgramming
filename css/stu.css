@@ -1,0 +1,205 @@
+html{
+	scroll-behavior: smooth;
+}
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+	
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currentlyupported */
+	
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}
+.justify-t {
+  text-justify: distribute-all-lines;
+  text-align-last: justify;
+}
+
+/* nav bar */
+#navbar {
+  overflow: hidden;
+  background-color: #108977;
+  padding: 90px 10px;
+  transition: 0.4s;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 99;
+	box-shadow: 0 4px 50px 0 #dbfc24;
+}
+
+#navbar a {
+  float: left;
+  color: #fff;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px; 
+  line-height: 25px;
+  border-radius: 4px;
+}
+
+#navbar #logo {
+  font-size: 35px;
+  font-weight: bold;
+  transition: 0.4s;
+}
+
+#navbar-right {
+  float: right;
+}
+
+@media screen and (max-width: 580px) {
+  #navbar {
+    padding: 20px 10px !important;
+  }
+  #navbar-right {
+    float: none;
+  }
+}
+
+
+.collapsible {
+  background-color: #108977;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+	letter-spacing: 1px;
+}
+
+.active, .collapsible:hover {
+  background-color: #29a08e;
+}
+
+.collapsible:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2212";
+}
+
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #fff;
+	border: 1px solid #108977;
+	font-size: 1rem;
+	letter-spacing: 1px;
+	line-height: 1.8rem;
+}
+
+
+
+.grid_row {
+  display: -ms-flexbox; /* IE 10 */
+  display: flex;
+  -ms-flex-wrap: wrap; /* IE 10 */
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+/* Create two equal columns that sits next to each other */
+
+
+
+.text-container {
+  position: relative;
+}
+
+.text-box {
+  position: absolute;
+  bottom: 15px;
+	left: 15px;
+  color: white;
+	text-shadow: 1px 1px #000;
+	width: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
+.content0{
+	padding-top: 300px;
+}
+
+.p0_1{
+	background-color: #108977;
+	background-size: cover;
+	color: #fff;
+	font-size: 3rem;
+	height: 300px;
+}
+
+.content1{
+	padding-top: 50px;
+}
+.p1_1 h1{;
+  font-size: 1.5rem;
+	letter-spacing: 2px;
+	color: #108977;
+	border-left: 20px solid #108977;
+}
+
+.parallax {
+  /* The image used */
+	background-image: url(../img/0411-1.jpg);
+
+  /* Full height */
+	height: 300px;
+
+  /* Create the parallax scrolling effect */
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+/* Turn off parallax scrolling for tablets and phones. Increase the pixels if needed */
+@media only screen and (max-device-width: 1366px) {
+  .parallax {
+    background-attachment: scroll;
+  }
+}
+
+.p3_1 p{
+	border: solid 1px #108977;
+}
+
+
+
+
+footer{
+	height: 200px;
+}
