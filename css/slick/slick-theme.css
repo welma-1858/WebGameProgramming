@@ -130,7 +130,7 @@
     position: absolute;
     bottom: -25px;
 
-    display: block;
+    display: none;
 
     width: 100%;
     padding: 0;
@@ -158,7 +158,7 @@
     font-size: 0;
     line-height: 0;
 
-    display: block;
+    display: none;
 
     width: 20px;
     height: 20px;
