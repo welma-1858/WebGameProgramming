@@ -35,7 +35,7 @@ h6 {
 	background-position: center center;
 	background-size: cover;
 	height: 100vh;
-	background-color: #108977;
+	background-image: url(../img/head.svg);
 }
 
 .masthead h1 {
@@ -105,25 +105,31 @@ h6 {
 }
 .p1_stuu h1{
 	color: #fff;
-	font-size: 1.2rem;
+	font-size: 1.8rem;
 	padding-top: 2px;
 	letter-spacing: .1rem;
+	line-height: 2.5rem;
+}
+.p1_stuu h3{
+	color: rgba(255, 255, 255, 0.57);
+	font-size: 1rem;
+	letter-spacing: .1rem;
+	font-weight: 500;
+	border-top: 1px solid rgba(255, 255, 255, 0.49);
 }
 .p1_stuu span{
 	font-size: .8rem;
 	opacity: 80%;
-	letter-spacing: .1px;
+	letter-spacing: 1.2px;
 }
 .p1_stuu p{
-	font-size: .95rem;
+	font-size:.85rem;
 	color: rgba(255, 255, 255, 0.64);
 	font-weight: 100;
-	letter-spacing: px;
+	letter-spacing: 1px;
 	line-height: 1.7rem;
-	padding-top: .8rem;
 	margin: none;
 	text-align: justify;
-	height: 280px
 }
 
 
@@ -137,6 +143,8 @@ h6 {
   width: 320px;
   height: 410px;
   perspective: 1000px;
+	
+	border-radius: 20px;
 }
 
 .flip-card-inner {
@@ -146,7 +154,7 @@ h6 {
   text-align: center;
   transition: transform 0.6s;
   transform-style: preserve-3d;
-  box-shadow: 0 4px 8px 0 #dbfc24;
+  box-shadow: 0 6px 10px 0 #dbfc24;
 }
 
 .flip-card:hover .flip-card-inner {
@@ -213,7 +221,7 @@ h6 {
 .button1 {
   background-color: #108977; 
   color: #fff; 
-  border: 1px solid #fff;
+  border: 1px solid rgba(255, 255, 255, 0.63);
 }
 
 .button1:hover {
@@ -249,14 +257,27 @@ h6 {
 	padding-top: 10rem;
 	padding-bottom: 10rem;
 }
-.p2_1 h1{;
+.p2_1 h1{
   font-size: 2.1rem;
 	letter-spacing: 2px;
 	color: #108977;
-	border-left: 20px solid #108977;
 }
 .p3_1 p{
 	border: solid 1px #108977;
+}
+.p3_2 img{
+	box-shadow: 8px 8px 20px 0 #dbfc24;
+}
+.p3_2_1{
+	border: 1px solid #108977;
+}
+.p3_2_1 h1{
+	color: #108977;
+	font-size: 2rem;
+}
+.p3_2_1 h2{
+	color: #108977;
+	font-size: 1.4rem;
 }
 @media (max-width: 768px) {
   
