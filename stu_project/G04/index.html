@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YZU歌唱大賽</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.54.0/dist/phaser.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.52.0/dist/phaser.min.js"></script>
+    <script src="js/object.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/pause.js"></script>
+    <script src="js/restart.js"></script>
+    <script src="js/finish.js"></script>
+
+    <!-- favicon圖標 -->
+    <link rel="shortcut icon" href="images/favicon.ico" />
+
+    <style type="text/css">
+        body {
+            position: relative;
+            margin: 0 auto;
+            padding: 10px;
+            width: 800px;
+            /* background-color: rgb(243, 226, 148); */
+            background-color: rgb(157, 209, 229);
+        }
+
+        .rule {
+            position: absolute;
+            top: 470px;
+            font: 16px/1.5 Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB, "\5B8B\4F53", sans-serif;
+        }
+
+        canvas {
+            width: 800;
+            height: 450;
+        }
+    </style>
+</head>
+<script>
+    //遊戲
+    class Play extends Phaser.Scene {
+
+        constructor() {
+            super('Play');
+        }
+
+        init() {
+            // Used to prepare data
+        }
+
+        preload() {
+            this.load.image('background3', 'assets/bg3.png'); //背景
+            this.load.image('background2', 'assets/bg2.png'); //背景
+            this.load.image('background1', 'assets/bg1.png'); //背景
+            this.load.image('UI_Level', 'assets/UI_Level.png'); //關卡字卡
+            this.load.image('UI_Pitch', 'assets/UI_Pitch.png'); //蒐集音符圖標
+            this.load.image('monsterParticles', 'assets/monsterParticles.png');
+            this.load.spritesheet('player', 'assets/player.png', { frameWidth: 73, frameHeight: 76 });      //玩家
+            this.load.spritesheet('pitch2', 'assets/pitch2.png', { frameWidth: 39, frameHeight: 51 });      //音符
+            this.load.spritesheet('monster1', 'assets/monster1.png', { frameWidth: 62, frameHeight: 76 });  //怪物1   
+            this.load.spritesheet('monster2', 'assets/monster2.png', { frameWidth: 44, frameHeight: 76 });  //怪物2 
+            this.load.spritesheet('monster2_blt', 'assets/monster2_3.png', { frameWidth: 39, frameHeight: 51 });  //怪物2的砲彈 
+            this.load.spritesheet('monster3', 'assets/monster3.png', { frameWidth: 50, frameHeight: 76 });  //怪物3 
+            this.load.spritesheet('bullet', 'assets/bullet.png', { frameWidth: 46, frameHeight: 27 });  //慶紀
+            this.load.image('pipe', 'assets/pipe.png'); //柱子
+            this.load.audio('audioEat', 'assets/audio/eat.mp3'); //吃到音符的音效
+            this.load.audio('audioClick', 'assets/audio/click.mp3'); //滑鼠點擊音效
+            this.load.audio('audioMove', 'assets/audio/Move2.mp3'); //玩家移動音效
+            this.load.audio('audioHit', 'assets/audio/hit.mp3'); //玩家撞柱音效
+            this.load.audio('audioShoot', 'assets/audio/shoot.mp3'); //玩家射擊音效
+            this.load.audio('audioShoot2', 'assets/audio/shoot2.mp3'); //擊中音效
+            this.load.audio('audioNextLv', 'assets/audio/nextLevel.mp3'); //下一級音效
+            this.load.audio('audioPlay', 'assets/audio/play.m4a'); //play BGM
+            this.load.image('wall', 'assets/wall.png');//一道牆
+        }
+
+        create() {
+            this.add.image(0, 0, 'background3').setOrigin(0, 0);
+            this.bgMove = this.add.tileSprite(0, 0, 800, 385, "background2").setOrigin(0, 0);
+            this.add.image(0, 0, 'background1').setOrigin(0, 0);
+            this.add.image(650, 14, 'UI_Level').setOrigin(0, 0);
+            this.add.image(665, 58, 'UI_Pitch').setOrigin(0, 0);
+
+            //玩家撞到物體的粒子特效
+            pitch_particles = this.add.particles('UI_Pitch');
+            pitch_emitter = pitch_particles.createEmitter({
+                alpha: { start: 1, end: 0 },
+                scale: { start: 0.5, end: 0.1 },
+                speedX: { min: -100, max: 100 },
+                speedY: { min: -100, max: 100 },
+                frequency: -1,
+                quantity: 10,
+                on: false
+            });
+            //子彈擊中怪物的粒子特效
+            monster_particles = this.add.particles('monsterParticles');
+            monster_emitter = monster_particles.createEmitter({
+                alpha: { start: 1, end: 0 },
+                scale: { start: 1, end: 0.5 },
+                speedX: { min: -100, max: 100 },
+                speedY: { min: -100, max: 100 },
+                frequency: -1,
+                quantity: 5,
+                on: false
+            });
+
+            audioEat = this.sound.add('audioEat'); //吃到音符的音效
+            audioClick = this.sound.add('audioClick'); //滑鼠點擊音效
+            audioMove = this.sound.add('audioMove'); //玩家移動音效
+            audioHit = this.sound.add('audioHit'); //玩家撞柱音效
+            audioShoot = this.sound.add('audioShoot'); //玩家射擊音效
+            audioShoot2 = this.sound.add('audioShoot2'); //擊中怪物音效
+            audioNextLv = this.sound.add('audioNextLv'); //下一級音效
+            audioPlay = this.sound.add('audioPlay'); //play BGM
+
+            //畫面外兩端放個物件，用碰撞來destroy物件
+            wall = this.physics.add.staticGroup();
+            wall.create(-50, 225, 'wall');
+            wall.create(1300, 225, 'wall');
+
+            PlayBGM = this.sound.add('audioPlay', {
+                volume: .5,
+                loop: true
+            });
+            PlayBGM.play();
+
+            //玩家
+            player = this.physics.add.sprite(100, 450, 'player');
+            player.setCollideWorldBounds(true); //玩家不會脫離邊界
+
+            this.input.keyboard.on('keydown-SPACE', function () {  //暫停遊戲
+                audioClick.play();
+                this.scene.pause();
+                this.scene.launch('Pause');
+            }, this);
+
+            this.anims.create({
+                key: 'turn',    //平常沒動動畫
+                frames: [{ key: 'player', frame: 2 }],
+                frameRate: 10,
+            });
+            this.anims.create({
+                key: 'move',     //移動動畫
+                frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.anims.create({
+                key: 'died',    //死掉動畫
+                frames: [{ key: 'player', frame: 3 }],
+                frameRate: 10,
+            });
+
+            //柱子(高450)
+            pipes = this.physics.add.group();
+            let pipe = pipes.create(400, randomNum(-125, 575, 125, 500), 'pipe');
+            pipe.setVelocityX(-150);
+            pipe.setImmovable();
+
+
+            //音符
+            pitch2 = this.physics.add.group();
+            this.anims.create({
+                key: 'pitch_change',
+                frames: this.anims.generateFrameNumbers('pitch2', { start: 0, end: 7 }),
+                frameRate: 5,
+                repeat: -1
+            })
+
+
+            //怪物1
+            monster1 = this.physics.add.group();
+            this.anims.create({
+                key: 'monster1_change',
+                frames: this.anims.generateFrameNumbers('monster1', { start: 0, end: 1 }),
+                frameRate: 5,
+                repeat: -1
+            })
+            //怪物2
+            monster2 = this.physics.add.group();
+            this.anims.create({
+                key: 'monster2_before',
+                frames: this.anims.generateFrameNumbers('monster2', { start: 0, end: 1 }),
+                frameRate: 5,
+                repeat: -1
+            });
+            this.anims.create({
+                key: 'monster2_after',
+                frames: this.anims.generateFrameNumbers('monster2', { start: 2, end: 3 }),
+                frameRate: 5,
+                repeat: -1
+            });
+            //怪物2的砲彈
+            monster2_blt = this.physics.add.group();
+            this.anims.create({
+                key: 'monster2_blt_change',
+                frames: this.anims.generateFrameNumbers('monster2_blt', { start: 0, end: 1 }),
+                frameRate: 5,
+                repeat: -1
+            })
+            //怪物3
+            monster3 = this.physics.add.group();
+            this.anims.create({
+                key: 'monster3_change',
+                frames: this.anims.generateFrameNumbers('monster3', { start: 0, end: 1 }),
+                frameRate: 5,
+                repeat: -1
+            });
+
+            //吃到音符計分
+            this.physics.add.overlap(player, pitch2, collectNote, null, this);
+
+            scoreText = this.add.text(726, 62, score, { font: '32px Impact', color: 'white' });  //顯示計分文字
+
+            levelText = this.add.text(725, 5, level, { font: '38px Impact', color: 'Goldenrod	' });
+
+            this.physics.add.overlap(player, pipes, hitObj, null, this);
+            this.physics.add.overlap(player, monster1, hitObj, null, this);    //設定撞到怪物
+            this.physics.add.overlap(player, monster2, hitObj, null, this);    //設定撞到怪物
+            this.physics.add.overlap(player, monster2_blt, hitObj, null, this);    //設定撞到怪物
+            this.physics.add.overlap(player, monster3, hitObj, null, this);    //設定撞到怪物
+
+            bullets = this.physics.add.group();
+            this.anims.create({
+                key: 'bullet_change',
+                frames: this.anims.generateFrameNumbers('bullet', { start: 0, end: 1 }),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.physics.add.collider(bullets, pipes, destroyObj, null, this);   //子彈打到柱子消失
+            this.physics.add.collider(monster2_blt, pipes, destroyObj, null, this);   //砲彈打到柱子消失
+            this.physics.add.collider(bullets, monster2_blt, hitMonster, null, this);   //砲彈打到子彈消失
+            this.physics.add.collider(bullets, wall, destroyObj, null, this);   //子彈離開畫面消失
+            this.physics.add.collider(pitch2, wall, destroyObj, null, this);   //音符離開畫面消失
+            this.physics.add.collider(monster1, wall, destroyObj, null, this);   //怪物離開畫面消失
+            this.physics.add.collider(monster2, wall, destroyObj, null, this);   //怪物離開畫面消失
+            this.physics.add.collider(monster2_blt, wall, destroyObj, null, this);   //怪物離開畫面消失
+            this.physics.add.collider(monster3, wall, destroyObj, null, this);   //怪物離開畫面消失
+            this.physics.add.collider(pipes, wall, destroyObj, putObj, this);   //柱子離開畫面消失，然後放新的柱子
+            this.physics.add.collider(bullets, monster1, hitMonster, null, this);    //子彈碰到怪物
+            this.physics.add.collider(bullets, monster2, hitMonster, null, this);    //子彈碰到怪物
+            this.physics.add.collider(bullets, monster3, hitMonster, null, this);    //子彈碰到怪物
+
+            cursors = this.input.keyboard.createCursorKeys();   //鍵盤控制
+
+            //生成柱子與音符
+            putObj();
+        }
+
+        update() {
+
+            if (cursors.up.isDown) { //只能往上
+                audioMove.play();
+                player.anims.play('move', true);//人物移動時動畫
+                player.setVelocityY(-200);
+            }
+            else {    //沒控制時自動往下
+                player.body.velocity.y += 10;
+                player.anims.play('turn');
+            }
+
+            //遊戲結束
+            if (gameOver) {
+                PlayBGM.stop();
+                this.input.keyboard.enabled = false; //停止遊戲畫面的鍵盤輸入
+                this.scene.launch('Restart');
+                player.anims.play('died');
+            }
+            else {
+                this.input.keyboard.enabled = true; //恢復遊戲畫面的輸入
+                //背景滾動，失敗時則停止滾動
+                this.bgMove.tilePositionX += 1;  //數值越高滾動速度越快
+            }
+
+            //怪物2距離玩家400時，朝玩家發射砲彈
+            monster2.children.iterate((child) => {
+                let disX = child.x - player.x;
+                let disY = child.y - player.y;
+                let dis = Math.sqrt(disX * disX + disY * disY);
+                let vX = -300 * disX * disX / (dis * dis);
+                let vY = -500 * disY * disY / (dis * dis);
+                //如果玩家在怪物下方
+                if (disY < 0) {
+                    vY *= -1;
+                }
+                if (dis <= 400 && !child.shoot) {
+                    child.shoot = true;
+                    let monster2blt = monster2_blt.create(child.x, child.y, 'monster2_blt');
+                    monster2blt.setImmovable();
+                    monster2blt.setVelocity(vX, vY);
+                    monster2blt.hit = 1;
+                    monster2blt.anims.play('monster2_blt_change', true);
+                    monster2blt.isBlt = true;
+                    child.anims.play('monster2_after', true);
+                }
+            });
+            //怪物3隨玩家移動
+            monster3.children.iterate((child) => {
+                child.setVelocityY(80);
+                //如果怪物在玩家下面，往上移動
+                if (child.y > player.y) {
+                    child.setVelocityY(-80);
+                }
+            });
+
+            //如果還有音符，可以按F射擊
+            this.input.keyboard.on('keydown-F', function () {
+                if (!shoot_bool && score > 0) {
+                    shoot_bool = true;
+                    score--;
+                    audioShoot.play();
+                    scoreText.setText(score);
+                    let bullet = bullets.create(player.x, player.y, 'bullet');
+                    bullet.setImmovable();
+                    bullet.setVelocityX(500);
+                    bullet.anims.play('bullet_change', true);
+                }
+            }, this);
+            this.input.keyboard.on('keyup-F', function () {
+                shoot_bool = false;
+            }, this);
+
+            //作弊，按下N獲得這關上限的音符數(ex 第一關19、第二關49)
+            this.input.keyboard.on('keydown-N', function () {
+                if (!cheat_bool) {
+                    cheat_bool = true;
+                    console.log("cheat activated！")
+                    switch (level) {
+                        case 1:
+                            score = 19;
+                            scoreText.setText(score);
+                            break;
+                        case 2:
+                            score = 49;
+                            scoreText.setText(score);
+                            break;
+                        case 3:
+                            score = 99;
+                            scoreText.setText(score);
+                            break;
+                    }
+
+                }
+
+            }, this);
+            this.input.keyboard.on('keyup-N', function () {
+                cheat_bool = false;
+            }, this);
+
+            //20分進入第二關
+            if (score >= 20 && level == 1) {
+                audioNextLv.play();
+                level++;
+                levelText.setText(level);
+            }
+
+            if (score >= 50 && level == 2) {
+                audioNextLv.play();
+                level++;
+                levelText.setText(level);
+            }
+
+            if (score >= 100 && level == 3) {
+                PlayBGM.stop();
+                this.scene.start('Finish');
+            }
+        }
+    }
+
+    const config = {
+        type: Phaser.WEBGL,
+        width: 800,
+        height: 450,
+        parent: 'phaser-example',
+        pixelArt: true,
+        physics: {
+            default: 'arcade'
+        },
+        audio: {
+            disableWebAudio: true
+        },
+        scene: [
+            Menu,
+            Play,
+            Pause,
+            Restart,
+            Finish
+        ],
+    };
+    const game = new Phaser.Game(config);
+
+    //吃到音符時刪除音符並計分
+    function collectNote(player, pitch) {
+        score++;  //計分
+        //如果是大音符總共+7  
+        if (pitch.isBig) {
+            score += 4;
+            //console.log("big");
+        }
+        scoreText.setText(score);
+        pitch.destroy();
+        audioEat.play(); 
+         
+    }
+
+    //玩家撞到物體，扣10個音符，如果音符<=0就失敗
+    function hitObj(player, Obj) {
+        if (!playergod_bool) {
+            audioHit.play();
+            pitch_emitter.setPosition(player.x, player.y).explode();
+            playergod_bool = true;
+            score -= 10;
+            scoreText.setText(score);
+            //如果音符沒了就失敗
+            if (score <= 0) {
+                score = 0;
+                scoreText.setText(score);
+                this.physics.pause();
+                gameOver = true;
+            }
+            //撞到音符會有2秒無敵，避免重複碰撞
+            else {
+                let blink = window.setInterval(playerBlink, 100);
+                window.setTimeout(function () {
+                    playergod_bool = false;
+                    player.setVisible(true);
+                    window.clearInterval(blink);
+                }, 2000)
+            }
+        }
+    }
+    //無敵時間讓角色閃爍
+    function playerBlink() {
+        if (player.visible) {
+            player.setVisible(false);
+        }
+
+        else if (!player.visible) {
+            player.setVisible(true);
+        }
+    }
+
+    // 為了避免生成的音符、柱子、怪物打架，用這個函式生成他們
+    function putObj() {
+        //設定柱子
+        let x = 850;
+        let y = randomNum(-125, 575, 125, 325);
+        let pipe = pipes.create(x, y, 'pipe');
+        pipe.setImmovable();
+        pipe.setVelocityX(-150);
+
+        //設定音符
+        x = 1000;
+        y = Phaser.Math.Between(100, 350);
+        pitch2.create(x, y, 'pitch2').isBig=false;
+        x += 100;
+        pitch2.create(x, y, 'pitch2').isBig=false;
+        x += 100;
+        pitch2.create(x, y, 'pitch2').isBig=false;
+        pitch2.children.iterate(function (child) {
+            child.setImmovable();
+            child.setVelocityX(-150);
+            child.anims.play('pitch_change', true);
+        });
+
+        //設定怪物
+        let rand = Phaser.Math.Between(0, 3);
+        x = Phaser.Math.Between(950, 1150);
+        y = Phaser.Math.Between(100, 350);
+        if (level == 2) {
+            switch (rand) {
+                case 1:
+                    let monster_1 = monster1.create(x, y, 'monster1');
+                    monster_1.setVelocityX(-150);
+                    monster_1.setImmovable();
+                    monster_1.hit = 2;
+                    monster_1.anims.play('monster1_change', true);
+                    monster_1.isBlt = false;
+                    break;
+
+                case 3:
+                    y = player.y;
+                    let monster_3 = monster3.create(x, y, 'monster3');
+                    monster_3.setVelocityX(-150);
+                    monster_3.setImmovable();
+                    monster_3.hit = 2;
+                    monster_3.anims.play('monster3_change', true);
+                    monster_3.isBlt = false;
+                    break;
+            }
+
+        }
+        else if (level == 3) {
+            switch (rand) {
+                case 1:
+                    let monster_1 = monster1.create(x, y, 'monster1');
+                    monster_1.setVelocityX(-150);
+                    monster_1.setImmovable();
+                    monster_1.hit = 2;
+                    monster_1.anims.play('monster1_change', true);
+                    monster_1.isBlt = false;
+                    break;
+
+                case 2:
+                    let monster_2 = monster2.create(x, y, 'monster3');
+                    monster_2.setVelocityX(-150);
+                    monster_2.setImmovable();
+                    monster_2.hit = 2;
+                    monster_2.anims.play('monster2_before', true);
+                    monster_2.shoot = false;
+                    monster_2.isBlt = false;
+                    break;
+
+                case 3:
+                    y = player.y;
+                    let monster_3 = monster3.create(x, y, 'monster3');
+                    monster_3.setVelocityX(-150);
+                    monster_3.setImmovable();
+                    monster_3.hit = 2;
+                    monster_3.anims.play('monster3_change', true);
+                    monster_3.isBlt = false;
+                    break;
+            }
+
+        }
+    }
+    //隨機，但不要其中某個範圍
+    function randomNum(min, max, Nmin, Nmax) {
+        let temp = Phaser.Math.Between(min, max);
+        if (temp > Nmin && temp < Nmax) {
+            temp = randomNum(min, max, Nmin, Nmax);
+        }
+        return temp;
+    }
+
+    //物體離開畫面就刪除
+    function destroyObj(Obj, wall) {
+        Obj.destroy();
+    }
+
+    //怪物被擊中兩次就死掉
+    function hitMonster(bullet, monster) {
+        audioShoot2.play();
+        monster.hit--;
+        bullet.destroy();
+        monster_emitter.setPosition(monster.x, monster.y).explode();
+        if (monster.hit == 0) {
+            let rand = Phaser.Math.Between(0, 1);
+            //怪物死掉有1/2機率掉落大音符，而且它不是怪物2的砲彈
+            if (rand == 0 && !monster.isBlt) {
+                let bigPitch = pitch2.create(monster.x, monster.y, 'pitch2').setScale(1.5).refreshBody();
+                bigPitch.setImmovable();
+                bigPitch.setVelocityX(-150);
+                bigPitch.anims.play('pitch_change', true);
+                bigPitch.isBig = true;
+            }
+            monster.destroy();
+        }
+    }
+
+    function PlayBGMstop() {
+        PlayBGM.stop();
+    }
+
+
+
+
+</script>
+
+<body>
+    <!-- <canvas id="game"></canvas> -->
+    <div class="rule">
+        方向鍵 ↑ 控制玩家，鍵盤 F 發射子彈<br>
+        空白鍵暫停遊戲<br>
+        &lt; Level說明 &gt;<br>
+        Level 1 : 0 個音符<br>
+        Level 2 : 20 個音符<br>
+        Level 3 : 50 個音符<br>
+        過關&emsp;&ensp;: 100 個音符<br>
+    </div>
+</body>
+
+</html>
