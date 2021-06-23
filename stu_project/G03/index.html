@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.52.0/dist/phaser.min.js"></script>
+
+    <style type="text/css">
+        body
+        {
+            
+            margin:0;
+            padding:0;
+        }
+
+    </style>
+</head>
+<body>
+    <script>
+        const config = 
+        {
+            type   : Phaser.AUTO,
+            width  : 1066,
+            height : 600,
+            
+            
+
+            physics: 
+            {
+                default: 'arcade',
+                arcade : 
+                {
+                    gravity: {y: 500},
+                    debug: false
+                }
+            },
+
+            scene  : 
+            {
+                preload: preload,
+                create : create,
+            }
+        };
+
+        const game = new Phaser.Game(config);
+
+        //let
+        let img;
+        let start;
+
+        function preload(){
+            this.load.image('bg','assets/Menu.png');
+        }
+        function create(){
+            bg= this.add.image(config.width/2,config.height/2);
+            start = this.add.text(config.width/2,config.height/2,'Start',{font:'36px Arial Black',backgroundColor:'rgba(51,68,102,0.8)',color:'white'}).setOrigin(0.5);
+            start.setInteractive().on('pointerdown',()=>{
+                window.close('Menu.html');
+                window.open('Stage_1.html');
+            })
+            start.scene.tweens.add(
+            {
+                targets: start,
+                scaleX:1,
+                scaleY:1,
+                alpha:0,
+                ease:'Linear',
+                duration:600,
+                repeat:-1,
+                yoyo:true
+            });
+        }
+        </script>
+
+</body>
+</html>
