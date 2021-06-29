@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonĝolando</title>
+    <script src="asset/js/phaser.min.js"></script>
+    <script src="asset/js/phaser.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const config =
+        {
+            type: Phaser.AUTO,
+            width: 1920,
+            height: 1080,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 300},
+                    debug: false
+                }
+            },
+            scene:
+            {
+                preload: preload,
+                create: create,
+                update: update,
+            },
+            scale:
+            {
+                mode: Phaser.Scale.FIT,
+                autoCenter: Phaser.Scale.CENTER_BOTH
+            }
+        };
+    const game = new Phaser.Game(config);
+
+    function preload() {
+        this.load.video('page1', 'asset/home/page1.mp4', 'loadeddata', false, true);
+        this.load.video('story', 'asset/home/story.mp4', 'loadeddata', false, false);
+        this.load.image('start','asset/home/start.png');
+        this.load.image('logo','asset/home/logo.png');
+        this.load.image('skip','asset/home/skip.png');
+    }
+
+    var video;
+    var storyvideo;
+    var button;
+    var buttonskip;
+
+    function create() {
+        var video = this.add.video(960, 540, 'page1');
+        video.play();
+        platform = this.physics.add.staticGroup();
+        platform.create(960, 300, 'logo');
+
+        button = this.add.sprite(config.width/2, config.height-180, 'start').setInteractive()
+        .on('pointerover', () => {
+            button.setScale(1.2);
+        })
+        .on('pointerout', () => {
+            button.setScale(1);
+        })
+        .on('pointerdown', () => {
+            var storyvideo = this.add.video(960, 540, 'story');
+            var volume = storyvideo.getVolume();
+            storyvideo.setVolume(0.5);
+            storyvideo.play()
+            .on('complete', () => {
+                window.location = "./level_1.html"
+                storyvideo.destroy();
+            });
+                
+            buttonskip = this.add.sprite(config.width-180, 80, 'skip').setInteractive()
+            .on('pointerover', () => {
+                buttonskip.setScale(1.2);
+            })
+            .on('pointerout', () => {
+                buttonskip.setScale(1);
+            })
+            .on('pointerdown', () => {
+                window.location = "./level_1.html"
+            });
+        })
+    }
+
+    function update(){
+
+    }
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
