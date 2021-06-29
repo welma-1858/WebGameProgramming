@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>別搶我眼鏡</title>
+    <script src="js/collider.js"></script>
+    <script src="js/people_move.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.52.0/dist/phaser.min.js"></script>
+    <link rel="preload" as="font" href="assets/HonobonoPopTTF-Regular.ttf" type="font/ttf" />
+    <style>
+        body {
+            margin: auto;
+            width: 1000px;
+            background-color: lightyellow;
+        }
+
+        @font-face {
+            font-family: CustomFont;
+            src: url('assets/HonobonoPopTTF-Regular.ttf');
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        /***********scene set up***/ ////////
+        const config = {
+            type: Phaser.AUTO,
+            width: 1000,
+            height: 700,
+            physics: {
+                default: "arcade",
+                arcade: {
+                    gravity: {
+                        y: 300
+                    },
+                    debug: false
+                },
+            },
+            audio: {
+                disableWebAudio: true
+            }
+        };
+        let cursors, banana, dog, bee, med, poison, passnger, bike, people, glasses, items, platforms, screenText,
+            checkCrounch = false,
+            Input_status = 0,
+            bee_pos = 1; //控制蜜蜂左右(第二場景)
+        setReversInput = false;
+        //確認左右方向
+        let leftStand = false,
+            rightStand = true;
+        //確認站立狀態，0為站立、1趴著、2騎腳踏車 
+        let stand = 0;
+        //難度 0為簡單 1為困難
+        let diffucutiy = -1;
+        //音樂
+        let bgmusic, dogmusic, beemusic, medmusic, poisonmusic, bikemusic, bananamusic, passngermusic, slipmusic;
+        var jumpcount = 0;
+        var game = new Phaser.Game(config);
+        var scene1 = new Phaser.Class({
+            Extends: Phaser.Scene,
+            initialize: function scene1() {
+                Phaser.Scene.call(this, {
+                    key: 'scene1'
+                });
+            },
+            preload: function () {
+                this.load.image('scene', 'assets/first_page/scene_one.png');
+                this.load.spritesheet('dog1', 'assets/first_page/dog.png', {
+                    frameWidth: 75,
+                    frameHeight: 75
+                });
+                this.load.image('banana', 'assets/first_page/banana.png');
+                this.load.spritesheet('bee1', 'assets/first_page/bee.png', {
+                    frameWidth: 60,
+                    frameHeight: 60
+                });
+                this.load.image('bike', 'assets/first_page/bike.png');
+                this.load.image('med', 'assets/first_page/med.png');
+                this.load.image('poison', 'assets/first_page/poison.png');
+                this.load.image('glasses', 'assets/first_page/glasses.png');
+                this.load.spritesheet('people', 'assets/first_page/people.png', {
+                    frameWidth: 78,
+                    frameHeight: 78
+                });
+                this.load.spritesheet('d_people', 'assets/first_page/dezzy_people.png', {
+                    frameWidth: 78,
+                    frameHeight: 78
+                });
+                this.load.spritesheet('passnger', 'assets/first_page/passnger.png', {
+                    frameWidth: 78,
+                    frameHeight: 78
+                });
+                this.load.image('platform', 'assets/first_page/platform.png');
+
+                //audio area
+                this.load.audio('bgmusic', 'sound/bgmusic.mp3');
+                this.load.audio('beemusic', 'sound/bee.mp3');
+                this.load.audio('bananamusic', 'sound/slip.mp3');
+                this.load.audio('bikemusic', 'sound/banana.mp3');
+                this.load.audio('dogmusic', 'sound/dog.mp3');
+                this.load.audio('medmusic', 'sound/med.mp3');
+                this.load.audio('passngermusic', 'sound/passnger.mp3');
+                this.load.audio('poisonmusic', 'sound/poison.mp3');
+            },
+
+            create: function () {
+                this.add.image(config.width / 2, config.height / 2, 'scene');
+                //地板設定
+                platforms = this.physics.add.staticGroup();
+                platforms.create(0, 680, 'platform').setScale(5, 0.6).refreshBody();
+                platforms.create(0, 120, 'platform').setScale(5, 0.3).refreshBody();
+                //素材產生
+                dog = this.physics.add.sprite(630, 625, 'dog1');
+                banana = this.physics.add.image(120, 30, 'banana');
+                bee = this.physics.add.sprite(320, 30, 'bee1');
+                bike = this.physics.add.image(800, 41, 'bike');
+                med = this.physics.add.group();
+                glasses = this.physics.add.image(-625, 450, 'glasses');
+                poison = this.physics.add.image(600, 93, 'poison');
+                people = this.physics.add.sprite(70, 630, 'people');
+                passnger = this.physics.add.sprite(350, 635, 'passnger');
+                med.add(this.physics.add.image(935, 590, 'med'));
+                med.add(this.physics.add.image(370, 93, 'med'));
+                //精靈圖設定
+                bee.body.setAllowGravity(false);
+                med.children.each(function (med_child) {
+                    med_child.body.setAllowGravity(false);
+                }, this);
+
+                //物件動畫
+                dog.anims.create({
+                    key: 'stand',
+                    frames: this.anims.generateFrameNumbers('dog1', {
+                        start: 0,
+                        end: 1
+                    }),
+                    repeat: -1
+                });
+                bee.anims.create({
+                    key: 'stand',
+                    frames: this.anims.generateFrameNumbers('bee1', {
+                        start: 0,
+                        end: 1
+                    }),
+                    repeat: -1
+                });
+                passnger.anims.create({
+                    key: 'stand',
+                    frames: this.anims.generateFrameNumbers('passnger', {
+                        start: 0,
+                        end: 4
+                    }),
+                    repeat: -1
+                });
+
+                //偵測鍵盤
+                cursors = this.input.keyboard.createCursorKeys();
+                //人物碰撞偵測
+                this.physics.add.collider(people, dog, dog_scene);
+                this.physics.add.collider(people, banana, banana_scene);
+                this.physics.add.collider(people, poison, poison_scene);
+                this.physics.add.collider(people, passnger, passnger_scene);
+                this.physics.add.collider(people, med, med_scene);
+                this.physics.add.collider(people, bike, bike_scene);
+                this.physics.add.collider(people, bee, bee_scene);
+                this.physics.add.collider(people, glasses, glasses_scene);
+                //地板偵測
+                this.physics.add.collider(people, platforms);
+                this.physics.add.collider(banana, platforms);
+                this.physics.add.collider(poison, platforms);
+                this.physics.add.collider(passnger, platforms);
+                this.physics.add.collider(dog, platforms);
+                this.physics.add.collider(bike, platforms);
+                this.physics.add.collider(bee, platforms);
+                this.physics.add.collider(glasses, platforms);
+                this.physics.add.collider(med.getChildren([0]), platforms);
+                //文字
+                let myFont = {
+                    fontFamily: 'CustomFont',
+                    fill: 'tomato',
+                    fontSize:"25px"
+                };
+                screenText = this.add.text(this.cameras.main.worldView.x + this.cameras.main.width / 2, this.cameras.main.worldView.y + this.cameras.main.height / 2 +130, '', myFont).setOrigin(0.5);
+                bike.setPushable(false);
+                move(); //主角控制
+                //音樂
+                bgmusic = this.sound.add('bgmusic').setVolume(0.5);
+                bananamusic = this.sound.add('bananamusic').setVolume(0.5);
+                beemusic = this.sound.add('beemusic').setVolume(0.5);
+                bikemusic = this.sound.add('bikemusic').setVolume(0.5);
+                dogmusic = this.sound.add('dogmusic').setVolume(0.5);
+                medmusic = this.sound.add('medmusic').setVolume(0.5);
+                passngermusic = this.sound.add('passngermusic').setVolume(0.5);
+                poisonmusic = this.sound.add('poisonmusic').setVolume(0.5);
+                bgmusic.setLoop(true).play();
+            },
+
+            update: function () {
+                if (setReversInput) { //如果有碰到毒藥||狗
+                    reverseInput();
+                } else {
+                    normalInput();
+                }
+                if (people.x >= 1000 && people.y >= 600) {
+                    people.x = 970;
+                    people.y = 80;
+                } else if (people.x >= 1000 && people.y <= 100) {
+                    people.x = 980;
+                    people.y = 630;
+                }
+                itemAnimation(); //其他物件動畫
+                if (people.x <= 10 && people.y <= 100) {
+                    cursors.enabled = false;
+                    bgmusic.stop();
+                    game.scene.remove('scene1');
+                    game.scene.start('scene2');
+                }
+            }
+        });
+
+        //scene two
+        var scene2 = new Phaser.Class({
+            Extends: Phaser.Scene,
+            initialize: function scene2() {
+                Phaser.Scene.call(this, {
+                    key: 'scene2'
+                });
+            },
+            preload: function () {
+                this.load.image('scene2', 'assets/second_page/second_scene.jpg');
+                this.load.image('platform2', 'assets/second_page/platform.png');
+                this.load.spritesheet('people', 'assets/second_page/people.png', {
+                    frameWidth: 78,
+                    frameHeight: 78
+                });
+                this.load.spritesheet('bee2', 'assets/second_page/bee.png', {
+                    frameWidth: 60,
+                    frameHeight: 60
+                });
+
+                this.load.audio('bgmusic', 'sound/bgmusic.mp3');
+            },
+
+            create: function () {
+                //放置物件
+                this.add.image(config.width / 2, config.height / 2, 'scene2');
+                people = this.physics.add.sprite(config.width / 2, 600, 'people');
+                bee = this.physics.add.sprite(config.width / 2, config.height / 2, 'bee2');
+                //地板建置
+                platforms = this.physics.add.staticGroup();
+                platforms.create(0, 680, 'platform2').setScale(5, 1).refreshBody();
+                //碰撞
+                this.physics.add.collider(people, platforms);
+                //鍵盤控制
+                cursors = this.input.keyboard.createCursorKeys();
+                //主角控制
+                move();
+                bee.body.setAllowGravity(false);
+                bee.anims.create({
+                    key: 'right',
+                    frames: this.anims.generateFrameNumbers('bee2', {
+                        start: 0,
+                        end: 1
+                    }),
+                    repeat: -1
+                });
+                bee.anims.create({
+                    key: 'left',
+                    frames: this.anims.generateFrameNumbers('bee2', {
+                        start: 2,
+                        end: 3
+                    }),
+                    repeat: -1
+                });
+                bgmusic = this.sound.add('bgmusic').setVolume(0.5);
+                bgmusic.setLoop(true).play();
+            },
+
+            update: function () {
+                normalInput();
+                if (bee.x >= 970 || bee.x <= 30) {
+                    bee_pos *= -1;
+                }
+                bee.x += bee_pos;
+                if (bee_pos == 1) {
+                    bee.anims.play('right', true);
+                } else {
+                    bee.anims.play('left', true);
+                }
+                bee.anims.msPerFrame = 100;
+                if (people.x <= 30) {
+                    diffucutiy = 1;
+                    bgmusic.stop();
+                    game.scene.remove('scene2');
+                    game.scene.start('scene3');
+                } else if (people.x >= 970) {
+                    diffucutiy = 0;
+                    bgmusic.stop();
+                    game.scene.remove('scene2');
+                    game.scene.start('scene3');
+                }
+            }
+        });
+        var scene_img, cam, scene_counter = 2;
+        var bee_num, passnger_num, med_num, poison_num, bike_num, banana_num, dog_num;
+        var dog_group, bee_group, passnger_group, banana_group, poison_group, med_group;
+        var score = 250;
+        var item_num_max = 2;
+        var block_num_max = 1;
+        var platform_num_max = 1;
+        var passnger_alive = false,
+            poison_alive = false,
+            banana_alive = false,
+            dog_alive = false;
+        var platform1, platform2, platform3, platform4, platform5;
+        var platform1_alive = false,
+            platform2_alive = false,
+            platform3_alive = false,
+            platform4_alive = false,
+            platform5_alive = false;
+        var block1, block2, block3, block4;
+        var block1_alive = false,
+            block2_alive = false,
+            block3_alive = false,
+            block4_alive = false;
+        var health = 27,
+            healthbar, healthSystem, health_time = 2000;
+        var timer, time = 0;
+        var score = 0;
+        var scene3 = new Phaser.Class({
+            Extends: Phaser.Scene,
+            initialize: function scene3() {
+                Phaser.Scene.call(this, {
+                    key: 'scene3'
+                });
+            },
+            preload: function () {
+                this.load.image('scene3_1', 'assets/third_page/back1.jpg');
+                this.load.image('scene3_2', 'assets/third_page/back2.jpg');
+                this.load.image('scene3_3', 'assets/third_page/back3.jpg');
+                this.load.image('scene3_4', 'assets/third_page/back4.jpg');
+                this.load.image('scene3_5', 'assets/third_page/back5.jpg');
+                this.load.image('scene3_6', 'assets/third_page/back6.jpg');
+                //平台
+                this.load.image('platform1', 'assets/third_page/platform1.png');
+                this.load.image('platform2', 'assets/third_page/platform2.png');
+                this.load.image('platform3', 'assets/third_page/platform3.png');
+                this.load.image('platform4', 'assets/third_page/platform4.png');
+                this.load.image('platform5', 'assets/third_page/platform5.png');
+                //障礙物
+                this.load.image('block1', 'assets/third_page/block1.png');
+                this.load.image('block2', 'assets/third_page/block2.png');
+                this.load.image('car', 'assets/third_page/car.png');
+                this.load.image('garbege', 'assets/third_page/garbege.png');
+                //物件
+                this.load.image('platform', 'assets/third_page/platform.png');
+                this.load.image('bike', 'assets/third_page/bike.png');
+                this.load.image('med', 'assets/third_page/med.png');
+                this.load.image('poison', 'assets/third_page/poison.png');
+                this.load.image('glasses', 'assets/third_page/glasses.png');
+                this.load.image('banana', 'assets/third_page/banana.png');
+
+                this.load.spritesheet('people', 'assets/third_page/people.png', {
+                    frameWidth: 78,
+                    frameHeight: 78
+                });
+                this.load.spritesheet('dog1', 'assets/third_page/dog.png', {
+                    frameWidth: 75,
+                    frameHeight: 75
+                });
+                this.load.spritesheet('bee1', 'assets/third_page/bee.png', {
+                    frameWidth: 60,
+                    frameHeight: 60
+                });
+                this.load.spritesheet('passnger', 'assets/third_page/passnger.png', {
+                    frameWidth: 78,
+                    frameHeight: 78
+                });
+                this.load.spritesheet('health', 'assets/third_page/health.png', {
+                    frameWidth: 320,
+                    frameHeight: 230
+                });
+                //audio area
+                this.load.audio('bgmusic', 'sound/bgmusic.mp3');
+                this.load.audio('beemusic', 'sound/bee.mp3');
+                this.load.audio('bananamusic', 'sound/slip.mp3');
+                this.load.audio('bikemusic', 'sound/banana.mp3');
+                this.load.audio('dogmusic', 'sound/dog.mp3');
+                this.load.audio('medmusic', 'sound/med.mp3');
+                this.load.audio('passngermusic', 'sound/passnger.mp3');
+                this.load.audio('poisonmusic', 'sound/poison.mp3');
+            },
+
+            create: function () {
+                if (diffucutiy == -1) {
+                    diffucutiy = 0;
+                }
+
+                //設定物件的數量
+                num_setup();
+                //場景跟地板
+                scene_img = this.add.image(0, 0, 'scene3_1').setOrigin(0);
+                platforms = this.physics.add.staticGroup();
+                platforms.create(0, 650, 'platform').setOrigin(0).setScale(20, 25).refreshBody();
+                //平台
+                platform1 = this.physics.add.image(-1000, 0, 'platform1').setPushable(false).disableBody(true, true);
+                platform2 = this.physics.add.image(-1000, 0, 'platform2').setPushable(false).disableBody(true, true);
+                platform3 = this.physics.add.image(-1000, 0, 'platform3').setPushable(false).disableBody(true, true);
+                platform4 = this.physics.add.image(-1000, 0, 'platform4').setPushable(false).disableBody(true, true);
+                platform5 = this.physics.add.image(-1000, 0, 'platform5').setPushable(false).disableBody(true, true);
+                platform1.body.setAllowGravity(false); //去除重力影響
+                platform2.body.setAllowGravity(false);
+                platform3.body.setAllowGravity(false);
+                platform4.body.setAllowGravity(false);
+                platform5.body.setAllowGravity(false);
+                //障礙物
+                block1 = this.physics.add.image(-2000, 500, 'block1').setScale(0.5).setPushable(false).disableBody(true, true);
+                block2 = this.physics.add.image(-2000, 500, 'block2').setScale(0.3).setPushable(false).disableBody(true, true);
+                block3 = this.physics.add.image(-2000, 500, 'car').setScale(0.5).setPushable(false).disableBody(true, true);
+                block4 = this.physics.add.image(-2000, 500, 'garbege').setScale(0.7).setPushable(false).disableBody(true, true);
+                //素材
+                people = this.physics.add.sprite(config.width / 2, 600, 'people');
+                healthbar = this.physics.add.sprite(200, 150, 'health').setScale(0.3);
+                healthbar.body.setAllowGravity(false);
+                healthbar_setup();
+                glasses = this.physics.add.image(-625, 450, 'glasses');
+                bike = this.physics.add.image(-600, 600, 'bike');
+                //狗
+                dog_group = this.physics.add.group({
+                    key: 'dog1',
+                    frameQuantity: dog_num
+                });
+                dog_group.children.each(function (dog_child) {
+                    dog_child.setScale(0.8);
+                    dog_child.disableBody(true, true);
+                    dog_child.anims.create({
+                        key: 'stand',
+                        duration: 500,
+                        frames: this.anims.generateFrameNumbers('dog1', {
+                            start: 0,
+                            end: 1
+                        }),
+                        repeat: -1
+                    });
+                }, this);
+
+                //蜜蜂
+                bee_group = this.physics.add.group({
+                    key: 'bee1',
+                    frameQuantity: bee_num
+                });
+                bee_group.children.each(function (bee_child) {
+                    bee_child.body.setAllowGravity(false);
+                    bee_child.disableBody(true, true);
+                    bee_child.anims.create({
+                        key: 'stand',
+                        duration: 500,
+                        frames: this.anims.generateFrameNumbers('bee1', {
+                            start: 0,
+                            end: 1
+                        }),
+                        repeat: -1
+                    });
+                }, this);
+                //香蕉
+                banana_group = this.physics.add.group({
+                    key: 'banana',
+                    frameQuantity: banana_num
+                });
+                banana_group.children.each(function (banana_child) {
+                    banana_child.disableBody(true, true);
+                });
+                //毒藥
+                poison_group = this.physics.add.group({
+                    key: 'poison',
+                    frameQuantity: poison_num
+                });
+                poison_group.children.each(function (poison_child) {
+                    poison_child.disableBody(true, true);
+                });
+                //路人
+                passnger_group = this.physics.add.group({
+                    key: 'passnger',
+                    frameQuantity: passnger_num
+                });
+                passnger_group.children.each(function (passnger_child) {
+                    passnger_child.disableBody(true, true);
+                    passnger_child.anims.create({
+                        key: 'stand',
+                        duration: 1000,
+                        frames: this.anims.generateFrameNumbers('passnger', {
+                            start: 0,
+                            end: 4
+                        }),
+                        repeat: -1
+                    });
+                }, this);
+                //解藥(只有需要他的時候才會出現)
+                med_group = this.physics.add.group({
+                    key: 'med',
+                    frameQuantity: med_num
+                });
+                med_group.children.each(function (med_child) {
+                    med_child.disableBody(true, true);
+                    med_child.setScale(.7);
+                });
+                //IO
+                cursors = this.input.keyboard.createCursorKeys();
+                //主角動畫
+                move();
+                //攝影機設定
+                cam = this.cameras.main;
+                cam.startFollow(people, true, 0.05, 0.05, 0, 250);
+                people.setCollideWorldBounds(true);
+                this.physics.world.setBounds(0, 0, 8000, 700);
+                cam.setBounds(0, 0, 8000, 500);
+                //碰撞
+                //人物碰撞偵測
+                this.physics.add.collider(people, block1);
+                this.physics.add.collider(people, block2);
+                this.physics.add.collider(people, block3);
+                this.physics.add.collider(people, block4);
+                this.physics.add.collider(people, platform1);
+                this.physics.add.collider(people, platform2);
+                this.physics.add.collider(people, platform3);
+                this.physics.add.collider(people, platform4);
+                this.physics.add.collider(people, platform5);
+                this.physics.add.collider(people, bike, bike_scene);
+                this.physics.add.collider(people, dog_group, dog_scene);
+                this.physics.add.collider(people, bee_group, bee_scene);
+                this.physics.add.collider(people, glasses, glasses_scene);
+                this.physics.add.collider(people, banana_group, banana_scene);
+                this.physics.add.collider(people, poison_group, poison_scene);
+                this.physics.add.collider(people, passnger_group, passnger_scene);
+                this.physics.add.collider(people, med_group, med_scene);
+                //地板偵測
+                this.physics.add.collider(people, platforms);
+                this.physics.add.collider(dog_group, platforms);
+                this.physics.add.collider(glasses, platforms);
+                this.physics.add.collider(banana_group, platforms);
+                this.physics.add.collider(poison_group, platforms);
+                this.physics.add.collider(passnger_group, platforms);
+                this.physics.add.collider(med_group, platforms);
+                this.physics.add.collider(block1, platforms);
+                this.physics.add.collider(block2, platforms);
+                this.physics.add.collider(block3, platforms);
+                this.physics.add.collider(block4, platforms);
+                this.physics.add.collider(bike, platforms);
+
+                //音樂
+                bgmusic = this.sound.add('bgmusic').setVolume(0.5);
+                bananamusic = this.sound.add('bananamusic').setVolume(0.5);
+                beemusic = this.sound.add('beemusic').setVolume(0.5);
+                bikemusic = this.sound.add('bikemusic').setVolume(0.5);
+                dogmusic = this.sound.add('dogmusic').setVolume(0.5);
+                medmusic = this.sound.add('medmusic').setVolume(0.5);
+                passngermusic = this.sound.add('passngermusic').setVolume(0.5);
+                poisonmusic = this.sound.add('poisonmusic').setVolume(0.5);
+                bgmusic.setLoop(true).play();
+                //血條系統
+                healthSystem = this.time.addEvent({
+                    delay: health_time,
+                    callback: health_delete,
+                    loop: true,
+                    paused: true
+                });
+                //遊玩時間
+                timer = this.time.addEvent({
+                    delay: 1000,
+                    callback: timer_count,
+                    loop: true,
+                    paused: false
+                });
+                let myFont = {
+                    fontFamily: 'CustomFont',
+                    fill: 'tomato',
+                    backgroundColor: 'pink',
+                    fontSize: '30px'
+                };
+                screenText = this.add.text(50, 50, '遊玩時間: \n分數: ', myFont);
+
+            },
+
+            update: function () {
+                if (setReversInput) { //如果有碰到毒藥||狗
+                    reverseInput();
+                    if (med_group.countActive()) {
+                        med_group.children.each(function (med_child) {
+                            if (med_child.x < people.x - 550) {
+                                med_child.disableBody(true, true);
+                            }
+                        }, this);
+                    }
+
+                } else {
+                    normalInput();
+                }
+                scene3_itemAnimation();
+                if (people.x >= 7800) { //切換場景
+                    if (scene_counter == 7) {
+                        bgmusic.stop();
+                        game.scene.remove('scene3');
+                        game.scene.start('scene4');
+                    }
+                    scene_img.destroy(); //刪除背景
+                    scene_img = this.add.image(0, 0, 'scene3_' + scene_counter).setOrigin(0).setDepth(-1); //貼上新的背景 並放在最後面
+                    scene_counter++; //場景指標
+                    people.x = 20; //重設位置
+                    resetitem();
+                }
+                if (people.x > 800 && people.x < 7800) {
+                    checkitem();
+                    if (bee_group.countActive()) {
+                        bee_group.children.each(function (bee_child) {
+                            if (bee_child.x < people.x - 550) {
+                                bee_child.disableBody(true, true);
+                                score += 100;
+                            } else {
+                                bee_child.x--;
+                            }
+                        }, this);
+                    }
+                    if (banana_group.countActive()) {
+                        banana_group.children.each(function (banana_child) {
+                            if (banana_child.x < people.x - 550) {
+                                banana_child.disableBody(true, true);
+                                score += 50;
+                            }
+                        }, this);
+                    }
+                    if (dog_group.countActive()) {
+                        dog_group.children.each(function (dog_child) {
+                            if (dog_child.x < people.x - 550) {
+                                dog_child.disableBody(true, true);
+                                score += 50;
+                            }
+                        }, this);
+                    }
+                    if (poison_group.countActive()) {
+                        poison_group.children.each(function (poison_child) {
+                            if (poison_child.x < people.x - 550) {
+                                poison_child.disableBody(true, true);
+                                score += 50;
+                            }
+                        }, this);
+                    }
+                    if (passnger_group.countActive()) {
+                        passnger_group.children.each(function (passnger_child) {
+                            if (passnger_child.x < people.x - 550) {
+                                passnger_child.disableBody(true, true);
+                                score += 50;
+                            } else {
+                                passnger_child.x--;
+                            }
+                        }, this);
+                    }
+                    if (block1.active) {
+                        if (block1.x < people.x - 550) {
+                            block1.disableBody(true, true);
+                            block_num_max++;
+                            block1_alive = false;
+                        }
+                    }
+                    if (block2.active) {
+                        if (block2.x < people.x - 550) {
+                            block2.disableBody(true, true);
+                            block2_alive = false;
+                            block_num_max++;
+                        }
+                    }
+                    if (block3.active) {
+                        if (block3.x < people.x - 550) {
+                            block3.disableBody(true, true);
+                            block3_alive = false;
+                            block_num_max++;
+                        }
+                    }
+                    if (block4.active) {
+                        if (block4.x < people.x - 550) {
+                            block4.disableBody(true, true);
+                            block4_alive = false;
+                            block_num_max++;
+                        }
+                    }
+
+                    if (platform1_alive) {
+                        if (platform1.x < people.x - 1000) {
+                            platform1.disableBody(true, true);
+                            platform1_alive = false;
+                            platform_num_max++;
+                        }
+                    }
+                    if (platform2_alive) {
+                        if (platform2.x < people.x - 1000) {
+                            platform2.disableBody(true, true);
+                            platform2_alive = false;
+                            platform_num_max++;
+                        }
+                    }
+                    if (platform3_alive) {
+                        if (platform3.x < people.x - 1000) {
+                            platform3.disableBody(true, true);
+                            platform3_alive = false;
+                            platform_num_max++;
+                        }
+                    }
+                    if (platform4_alive) {
+                        if (platform4.x < people.x - 1000) {
+                            platform4.disableBody(true, true);
+                            platform4_alive = false;
+                            platform_num_max++;
+                        }
+                    }
+                    if (platform5_alive) {
+                        if (platform5.x < people.x - 1000) {
+                            platform5.disableBody(true, true);
+                            platform5_alive = false;
+                            platform_num_max++;
+                        }
+                    }
+                    if(glasses.x<people.x-500&&stand==1){
+                        glasses.x=people.x-300;
+                        glasses.y=people.y-100;
+
+                        
+                    }
+                }
+            }
+        });
+        var scoreText, tween;
+        var scoremusic;
+        var scene4 = new Phaser.Class({
+
+            Extends: Phaser.Scene,
+            initialize: function scene4() {
+                Phaser.Scene.call(this, {
+                    key: 'scene4'
+                });
+            },
+            preload: function () {
+                this.load.image('scene4', 'assets/third_page/scoreback.png');
+                this.load.image('scene_text', 'assets/third_page/GRADE.png');
+                this.load.image('again_btn', 'assets/third_page/BTN1.png');
+                this.load.image('over_btn', 'assets/third_page/BTN2.png');
+                this.load.audio('score_music', 'sound/score_music.mp3');
+            },
+
+            create: function () {
+                this.add.image(config.width / 2, config.height / 2, 'scene4');
+                scoreText = this.add.image(510, 60, 'scene_text');
+                this.add.image(500, 500, 'again_btn').setInteractive().on('pointerdown', (pointer) => {
+                    scoremusic.stop();
+                    game.scene.remove('scene4');
+                    game.scene.add('scene1', scene1);
+                    game.scene.add('scene2', scene2);
+                    game.scene.add('scene3', scene3);
+                    game.scene.add('scene4', scene4);
+                    score=0;
+                    time=0;
+                    health=27;
+                    stand=0;
+                    game.scene.start('scene3');
+                });
+                this.add.image(500, 620, 'over_btn').setInteractive().on('pointerdown', (pointer) => {
+                    scoremusic.stop();
+                    game.scene.remove('scene4');
+                    game.scene.add('scene1', scene1);
+                    game.scene.add('scene2', scene2);
+                    game.scene.add('scene3', scene3);
+                    game.scene.add('scene4', scene4);
+                    score=0;
+                    time=0;
+                    health=27;
+                    stand=0;
+                    game.scene.start('scene1');
+                });
+                scoremusic = this.sound.add('score_music').setVolume(0.5);
+                scoremusic.setLoop(true).play();
+                let myFont = {
+                    fontFamily: 'CustomFont',
+                    fill: 'black',
+                    fontSize: '200px',
+                };
+                screenText = this.add.text(this.cameras.main.worldView.x + this.cameras.main.width / 2, this.cameras.main.worldView.y + this.cameras.main.height / 2 - 50, score, myFont).setOrigin(0.5);
+                tween = this.tweens.add({
+                    targets: scoreText,
+                    y: scoreText.y + 15,
+                    ease: 'Linear', // 'Cubic', 'Elastic', 'Bounce', 'Back'
+                    duration: 500,
+                    repeat: -1,
+                });
+
+            },
+
+            update: function () {
+                tween.play();
+            }
+        });
+        game.scene.add('scene1', scene1);
+        game.scene.add('scene2', scene2);
+        game.scene.add('scene3', scene3);
+        game.scene.add('scene4', scene4);
+        game.scene.start('scene1');
+    </script>
+</body>
+
+</html>
