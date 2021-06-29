@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>《元智歌唱大賽》遊戲企劃</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom styles for this template -->
+    <link href="../../../css/stu.css" rel="stylesheet">
+    
+    <!-- Custom fonts for this template -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    <link href="../../../vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet" type="text/css">
+    
+    <!--web font-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC:300,400,500,700,900&display=swap" rel="stylesheet">
+   
+    <!-- slick slideshow -->
+		<link rel="stylesheet" type="text/css" href="../../../css/slick/slick-theme.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/slick/slick.css"/>
+		
+  
+  	<style>
+			.parallax {
+				/* The image used */
+				background-image: url(../project/img/G04.jpg);
+
+				/* Full height */
+				height: 300px;
+
+				/* Create the parallax scrolling effect */
+				background-attachment: fixed;
+				background-position: center;
+				background-repeat: no-repeat;
+				background-size: cover;
+			}
+		</style>
+  
+</head>
+
+<body>
+     
+<!-- Navigation -->
+<div id="navbar">
+  <h1><a href="#" id="logo">《第四組：元智歌唱大賽》遊戲企劃</a><a id="navbar-right" href="../../../index.html"><i class="fas fa-home"></i> 回首頁</a></h1>
+	<h2 class="pl-4 m-0">1061829 李孟珊｜1062004 應淯文｜1062024 陳晁傑</h2>
+</div>
+   
+   
+
+<section class="container content0">
+	<div class="row p1_1">
+  	<div class="col-12 px-0 mb-5">
+  		<h1 class="px-3 mb-4">遊戲介紹</h1>
+  		<button class="collapsible">遊戲主題</button>
+			<div class="content">
+				<p class="p-4 m-0">歌唱比賽模擬遊戲</p>
+			</div>
+			<button class="collapsible mt-3">提案動機</button>
+			<div class="content">
+				<p class="p-4 m-0">平時喜歡關注明星娛樂消息，也很喜歡看選秀節目，因此想要做一款選秀遊戲，一飽選秀癮 ，並且想要將主題切合我們的生活，因此以元智大學為我們故事的舞台，參加一場元智大學的歌唱比賽</p>
+			</div>
+			<button class="collapsible mt-3">遊戲說明</button>
+			<div class="content">
+				<p class="p-4 m-0">依照遊戲指示使用鍵盤操控參賽者完成比賽</p>
+			</div>			
+  	</div>
+  	<div class="col-12 px-0 mb-5   ">
+  		<h1 class="px-3 mb-4">遊戲內容</h1>
+  		<button class="collapsible">遊戲故事</button>
+			<div class="content">
+				<p class="p-4 m-0">玩家扮演參加元智大學歌唱大賽的參加者，通過關卡完成表演贏得比賽</p>
+			</div>
+			<button class="collapsible mt-3">遊戲玩法</button>
+			<div class="content">
+				<p class="p-4 m-0">方向鍵↑控制玩家移動，鍵盤F發射子彈</p>
+			</div>
+			<button class="collapsible mt-3">遊戲任務</button>
+			<div class="content">
+				<p class="p-4 m-0">蒐集彩色音符子彈及消滅怪物獲得分數，累積一定分數通過三個階段</p>
+			</div>
+			<button class="collapsible mt-3">遊戲目標</button>
+			<div class="content">
+				<p class="p-4 m-0">收集 100 個音符 通過關卡完成表演贏得比賽</p>
+			</div>
+			<button class="collapsible mt-3">遊戲規則</button>
+			<div class="content">
+				<p class="p-4 m-0">收集彩色音符子彈獲得分數，碰到怪物或是柱子會扣子彈數，一旦子彈數歸零，則遊戲結束並從該階段再重新開始</p>
+			</div>
+						
+  	</div>
+  </div>
+</section>
+	
+<section class="container-fluid parallax">
+</section>    
+
+<section class="container content1">
+	<div class="row p1_1">
+  	<div class="col-12 px-0 mb-5   ">
+  		<h1 class="px-3 mb-4">遊戲架構</h1>
+  		<button class="collapsible">遊戲流程設計</button>
+			<div class="content">
+				<p class="p-4 m-0">開始畫面 – 遊戲 – 過關</p>
+			</div>
+			<button class="collapsible mt-3">遊戲腳本設計</button>
+			<div class="content">
+				<p class="p-4 m-0"><img src="img/stu_script.jpg" class="img-fluid"></p>
+			</div>
+			<button class="collapsible mt-3">遊戲關卡設計</button>
+			<div class="content">
+				<ul class="py-4 m-0">
+					<li>Level 1<br>
+					設置柱子障礙物，玩家必須避開柱子收集音符，關卡目的為讓玩家熟悉操作<img src="img/stu_level1.jpg" class="img-fluid"></li>
+					<li>Level <br>
+					收集到20 個音符後進入 Level 2 ，開始出現怪物阻擋玩家，因此玩家需要發射子彈來消滅怪物<img src="img/stu_level2.jpg" class="img-fluid"><br>
+					固定不動的怪物<img src="img/stu_level2_1.jpg">會移動擋住玩家去路的怪物
+					<img src="img/stu_level2_2.jpg"></li>
+					<li>Level 3<br>
+					收集到50 個音符後進入 Level 3 ，增加了會攻擊的怪物，必須更加小心。收集到 100 個音符後過關。<img src="img/stu_level3.jpg" class="img-fluid"><br>
+					會發射頭上符號的怪物
+					<img src="img/stu_level3_1.jpg"><br>
+					之中如果消滅怪物，有50% 的機率出現大音符，可以得到比較多的音符數量，增加玩家消滅怪物的動機，以及平衡遊戲的難易度。<img src="img/stu_level3_4.jpg">
+					</li>
+				</ul>
+			</div>			
+  	</div>
+  	<div class="col-12 px-0 mb-5   ">
+  		<h1 class="px-3 mb-4">遊戲美術</h1>
+  		<button class="collapsible">遊戲場景</button>
+			<div class="content">
+				<p class="p-4 m-0"><img src="img/G4img1.jpg" class="img-fluid"></p>
+			</div>
+			<button class="collapsible mt-3">遊戲元素</button>
+			<div class="content">
+				<div class="row p-4">
+					<div class="col p-1 text-container">
+						<img src="img/G4img6.jpg" class="py-1 img-fluid">
+						<img src="img/G4img4.jpg" class="py-1 img-fluid"><img src="img/stu_scene01.jpg" class="py-1 img-fluid">
+					</div>
+					<div class="col p-1 text-container">
+						<img src="img/stu_scene02.jpg" class="py-1 img-fluid">
+						<img src="img/G4img3.jpg" class="py-1 img-fluid">
+						<img src="img/G4img7.jpg" class="py-1 img-fluid">
+					</div>
+					<div class="col p-1 text-container">
+						
+						<img src="img/G4img9.jpg" class="py-1 img-fluid">
+						<img src="img/stu_scene03.jpg" class="py-1 img-fluid">
+						<img src="img/G4img8.jpg" class="py-1 img-fluid">
+					</div>
+					<div class="col p-1 text-container">
+						<img src="img/G4img5.jpg" class="py-1 img-fluid">
+						<img src="img/stu_scene04.jpg" class="py-1 img-fluid">
+						<img src="img/G4img2.jpg" class="py-1 img-fluid">
+					</div>
+				</div>
+			</div>
+			<button class="collapsible mt-3">遊戲音效</button>
+			<div class="content">
+				<p class="p-4 m-0">大部分音效使用的是<a href="https://www.soundjay.com/" target="_blank"> SoundJay </a>免費的音效軟體，開始畫面以及遊戲畫面的音樂是使用garageband 軟體進行的製作</p>
+			</div>			
+  	</div>  	
+  	<div class="col-12 px-0 mb-5">
+  		<h1 class="px-3 mb-4">時程規劃</h1>
+  		<div class="p3_1">
+  			<div class="p-4 m-0"><img src="img/schedual.jpg" class="img-fluid"></div>
+  		</div>
+  	</div>
+  	<div class="col-12 px-0 mb-5">
+  		<h1 class="px-3 mb-4">小組分工</h1>
+  		<div class="p3_1">
+				<div class="p-4 m-0">
+					1061829 李孟珊：遊戲程式、美術素材製作<br>
+					1062004 應淯文：遊戲程式、遊戲流程編排<br>
+					1062024 陳晁傑：遊戲程式、測試與整合
+				</div>
+  		</div>
+  	</div>
+  </div>
+</section>
+
+	
+<footer></footer>
+	
+<!-- AOS -->
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+  AOS.init();
+
+
+// Scroll to specific values
+// scrollTo is the same
+window.scroll({
+  top: 2500, 
+  left: 0, 
+  behavior: 'smooth'
+});
+
+// Scroll certain amounts from current position 
+window.scrollBy({ 
+  top: 100, // could be negative value
+  left: 0, 
+  behavior: 'smooth' 
+});
+
+// Scroll to a certain element
+document.querySelector('.hello').scrollIntoView({ 
+  behavior: 'smooth'
+});
+</script>		
+    
+
+<!-- Bootstrap core JavaScript -->
+<script src="../../../vendor/jquery/jquery.min.js"></script>
+<script src="../../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    
+<!-- Plugin JavaScript --> 
+<script src="../../../vendor/jquery-easing/jquery.easing.min.js"></script> 
+<script src="../../../js/scrolling-nav.js"></script>
+    
+    
+<!-- Lazyload JavaScript -->    
+<script src="../../../js/lazysizes.min.js" async></script>
+
+
+    
+<!-- Nav Hide/Show    
+<script>
+var didScroll;
+var lastScrollTop = 0;
+var delta = 5;
+var navbarHeight = $('.header').outerHeight();
+
+$(window).scroll(function(event){
+    didScroll = true;
+});
+
+setInterval(function() {
+    if (didScroll) {
+        hasScrolled();
+        didScroll = false;
+    }
+}, 250);
+
+function hasScrolled() {
+    var st = $(this).scrollTop();
+    
+    // Make sure they scroll more than delta
+    if(Math.abs(lastScrollTop - st) <= delta)
+        return;
+    
+    // If they scrolled down and are past the navbar, add class .nav-up.
+    // This is necessary so you never see what is "behind" the navbar.
+    if (st > lastScrollTop && st > navbarHeight){
+        // Scroll Down
+        $('.header').removeClass('nav-down').addClass('nav-up');
+    } else {
+        // Scroll Up
+        if(st + $(window).height() < $(document).height()) {
+            $('.header').removeClass('nav-up').addClass('nav-down');
+        }
+    }
+    
+    lastScrollTop = st;
+}
+</script> -->
+
+
+
+<!-- Show Img Alt -->      
+<script>
+  $(".showalt").each(function() {
+    $(this).after('<p class="alt">' + $(this).attr('alt') + '</p>');
+  })
+</script>
+
+<!-- scroll navbar -->
+<script>
+// When the user scrolls down 80px from the top of the document, resize the navbar's padding and the logo's font size
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+    document.getElementById("navbar").style.padding = "20px 10px";
+    document.getElementById("logo").style.fontSize = "25px";
+  } else {
+    document.getElementById("navbar").style.padding = "80px 10px";
+    document.getElementById("logo").style.fontSize = "35px";
+  }
+}
+</script>
+
+
+
+<!-- slick slideshow -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="js/slick.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.slider-for').slick({
+				slidesToShow: 1,
+				slidesToScroll: 1,
+				arrows: false,
+				fade: true,
+				asNavFor: '.slider-nav'
+			});
+			$('.slider-nav').slick({
+				slidesToShow: 3,
+				slidesToScroll: 1,
+				asNavFor: '.slider-for',
+				dots: true,
+				centerMode: true,
+				focusOnSelect: true
+			});
+		
+		$('.p3_slick').slick({
+			slidesToShow: 3,
+			slidesToScroll: 1,
+			autoplay: true,
+			autoplaySpeed: 2000,
+		});
+      
+  });
+</script>	
+
+<!-- 收起展開的目錄 -->
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    } 
+  });
+}
+</script>
+
+
+
+
+
+</body>
+
+</html>
