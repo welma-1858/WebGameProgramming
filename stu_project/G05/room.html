@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DetectiveGame living room</title>
+    <script src="phaser.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+        const config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+
+
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: false,
+                    debug: false
+                }
+            },
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        const game = new Phaser.Game(config);
+        game.MyState = {};
+        var upKey;
+        game.MyState.Startstate = {}
+
+        function preload() {
+            this.load.image('bg', './game_assets/SceneObjects/livingRoom/livR_floor.png');
+            this.load.image('clock', './game_assets/SceneObjects/livingRoom/clock.png');
+            this.load.image('bookShelf', './game_assets/SceneObjects/livingRoom/bookShelf.png');
+            this.load.image('table', './game_assets/SceneObjects/livingRoom/table.png');
+            this.load.image('fire', './game_assets/SceneObjects/livingRoom/fireplaces.png');
+            this.load.image('sofa', './game_assets/SceneObjects/livingRoom/sofa.png');
+            this.load.image('wall', './game_assets/SceneObjects/livingRoom/livR_wall.png');
+            //sence object
+            this.load.image('clockinfo', './game_assets/infoBar/livingRoom/clock.png');
+            this.load.image('keyinfo', './game_assets/infoBar/livingRoom/key.png');
+            this.load.image('photoinfo', './game_assets/infoBar/livingRoom/photo.png');
+            this.load.image('screwdriverinfo', './game_assets/infoBar/livingRoom/screwdriver.png');
+            //infoBar
+
+            this.load.image('photoT', './game_assets/ToolKitObjects/RoomTool/photo.png');
+            this.load.image('screwT', './game_assets/ToolKitObjects/RoomTool/screwdriver.png');
+            this.load.image('skeyT', './game_assets/ToolKitObjects/RoomTool/study key.png');
+            this.load.image('toolbar', './game_assets/BlckBar_ToolKit/ToolBar.png');
+            //tool
+            this.load.audio('bg03', './game_assets/music/03.mp3');
+            this.load.audio('itemmusic', './game_assets/music/teleport01.mp3');
+            //music
+            this.load.spritesheet('dude', 'game_assets/Character/test.png', {
+                frameWidth: 64,
+                frameHeight: 64
+            });
+        }
+
+
+        let platforms;
+        let player;
+
+
+
+
+        function create() {
+            let music = this.sound.add('bg03');
+            let music2 = this.sound.add('itemmusic');
+            music.play();
+            toolbar = this.physics.add.staticGroup();
+            toolitems = this.physics.add.staticGroup();
+            this.add.image(400, 300, 'bg').setScale(1 / 3);
+            items = this.physics.add.staticGroup();
+            platforms = this.physics.add.staticGroup();
+            this.add.image(390, 60, 'wall').setScale(1 / 3);
+
+            this.add.image(660, 300, 'sofa').setScale(1 / 3);
+            const y = this.add.image(540, 50, 'clock').setScale(1 / 3);
+
+            this.add.image(380, 50, 'fire').setScale(1 / 3);
+            toolbar.create(732, 250, 'toolbar').setScale(1 / 6);
+            const s = platforms.create(512, 320, 'table').setScale(1 / 3).refreshBody();
+            s.setInteractive();
+            s.on('pointerdown', () => {
+                // if(player.x<=530&&player.x>=500||player.y>=300&&player.y<=290){
+                window.alert('輸入1215');
+                // console.log('hello');
+                toolitems.create(710, 280, 'skeyT').setScale(1 / 4);
+                const r = items.create(340, 300, 'keyinfo').setScale(1 / 3);
+                r.setInteractive();
+                r.on('pointerdown', () => {
+                    //window.alert('ok');
+                    r.visible = false; //點及讓圖片消失
+                });
+                music2.play();
+                //}
+            });
+            const z = this.add.image(175, 50, 'bookShelf').setScale(1 / 3);
+            z.setInteractive();
+            z.on('pointerdown', () => {
+                window.alert('screwdriver');
+                //console.log('hello');
+                const o = items.create(340, 300, 'screwdriverinfo').setScale(1 / 3);
+                music2.play();
+                o.setInteractive();
+                o.on('pointerdown', () => {
+                    //window.alert('ok');
+                    o.visible = false; //點及讓圖片消失
+                });
+                //toolitems.create(710, 180, 'screwT').setScale(1/4);
+                var moveScrew = toolitems.create(710, 180, 'screwT').setScale(1 / 4).setInteractive();
+                this.input.setDraggable(moveScrew);
+                this.input.dragDistanceThreshold = 16;
+                this.input.on(dragstart, function(pointer, moveScrew) {
+                    moveKey.setTint(0xff0000);
+                });
+                this.input.on('drag', function(pointer, moveScrew, dragX, dragY) {
+                    moveScrew.x = dragX;
+                    moveScrew.y = dragY;
+                });
+                this.input.on('dragend', function(pointer, moveKey) {
+                    moveScrew.clearTint();
+                    if (moveKey.y >= 10 && moveKey.y <= 70) {
+                        window.alert('好像有什麼重要文件?');
+                        const q = items.create(340, 300, 'photoinfo').setScale(1 / 3);
+                        music2.play();
+                        q.setInteractive();
+                        q.on('pointerdown', () => {
+                            //window.alert('ok');
+                            q.visible = false; //點及讓圖片消失
+                        });
+                        toolitems.create(710, 100, 'photoT').setScale(1 / 4);
+                        //放到對的位置顯示出東西
+                        moveScrew.x = 710;
+                        moveScrew.y = 180;
+                        //滑鼠放下回歸原位
+
+
+                    } else {
+                        moveKey.x = 710;
+                        moveKey.y = 180;
+                        //位置不對，滑鼠放下回歸原位
+                    }
+
+                });
+            });
+            y.setInteractive();
+            y.on('pointerdown', () => {
+                //console.log('1215code');
+                window.alert('1215code');
+
+                items.create(340, 300, 'clockinfo').setScale(1 / 3);
+                music2.play();
+                //this.add.image(710, 180, 'paperT').setScale(1/4);
+            });
+
+
+            /*getspoon=spoontool.on('pointerdown',()=>{
+                console.log('hello');
+                //window.alert('發現勺子');
+                getspoon=true;
+                this.add.image(340, 300, 'spooninfo').setScale(1/3);
+                this.add.image(710, 100, 'spoonT').setScale(1/4);
+            });*/
+
+
+            player = this.physics.add.sprite(100, 450, 'dude').setScale(1.5).refreshBody();
+
+
+            player.setCollideWorldBounds(true);
+
+            this.anims.create({
+                key: 'left',
+                frames: this.anims.generateFrameNumbers('dude', {
+                    start: 4,
+                    end: 7
+                }),
+                frameRate: 10,
+                repeat: -1
+            });
+
+            this.anims.create({
+                key: 'turn',
+                frames: [{
+                    key: 'dude',
+                    frame: 0
+                }],
+                frameRate: 20
+            });
+
+            this.anims.create({
+                key: 'right',
+                frames: this.anims.generateFrameNumbers('dude', {
+                    start: 8,
+                    end: 11
+                }),
+                frameRate: 10,
+                repeat: -1
+            });
+
+            this.anims.create({
+                key: 'up',
+                frames: this.anims.generateFrameNumbers('dude', {
+                    start: 12,
+                    end: 15
+                }),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.anims.create({
+                key: 'down',
+                frames: this.anims.generateFrameNumbers('dude', {
+                    start: 0,
+                    end: 3
+                }),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.physics.add.collider(player, platforms);
+
+
+            cursors = this.input.keyboard.createCursorKeys();
+
+
+        }
+
+        function update() {
+            if (cursors.left.isDown) {
+                player.setVelocityX(-160);
+
+                player.anims.play('left', true);
+            } else if (cursors.right.isDown) {
+                player.setVelocityX(160);
+
+                player.anims.play('right', true);
+            } else {
+                player.setVelocityX(0);
+
+                player.anims.play('turn');
+            }
+
+            if (cursors.up.isDown) {
+                player.setVelocityY(-160);
+                player.anims.play('up');
+
+            } else if (cursors.down.isDown) {
+                player.setVelocityY(160);
+                player.anims.play('down');
+
+            }
+
+
+
+
+
+
+        }
+
+        function dragstart(pointer, moveScrew) {
+            moveKey.setTint(0xff0000);
+        }
+
+        function drag(pointer, moveScrew, dragX, dragY) {
+            moveKey.x = dragX;
+            moveKey.y = dragY;
+        }
+
+        function dragend(pointer, moveScrew) {
+            moveKey.clearTint();
+
+        }
+
+        function opendesk(moveKey, DESK) {
+            window.alert('NOOOO');
+
+
+        }
+    </script>
+</body></html>
