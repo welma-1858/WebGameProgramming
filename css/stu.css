@@ -44,7 +44,6 @@ h6 {
 }
 
 #navbar a {
-  float: left;
   color: #fff;
   text-align: center;
   padding: 12px;
@@ -58,6 +57,12 @@ h6 {
   font-size: 35px;
   font-weight: bold;
   transition: 0.4s;
+}
+#navbar h2{
+	color: #fff;
+	font-size: 13px;
+	border-top: 1px solid #fff;
+	padding-top: 15px;
 }
 
 #navbar-right {
@@ -144,10 +149,13 @@ h6 {
 
 
 
-
-
-
-
+pre {
+  font-family: Consolas,"courier new";
+  color: #808080;
+  background-color: #f1f1f1;
+  padding: 2px;
+  font-size: 105%;
+}
 
 
 
@@ -173,19 +181,24 @@ h6 {
 	border-left: 20px solid #108977;
 }
 
-.parallax {
-  /* The image used */
-	background-image: url(../img/0411-1.jpg);
-
-  /* Full height */
-	height: 300px;
-
-  /* Create the parallax scrolling effect */
-  background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+a{
+	color: #108977;
 }
+a:hover{
+	text-decoration: none;
+	color: rgba(16, 137, 119, 0.58);
+}
+table, th, td {
+  border: 1px solid #108977;
+}
+.tableA{
+	background-color: rgba(16, 137, 119, 0.54);
+}
+th, td {
+  padding: 10px;
+}
+
+
 /* Turn off parallax scrolling for tablets and phones. Increase the pixels if needed */
 @media only screen and (max-device-width: 1366px) {
   .parallax {
@@ -193,11 +206,15 @@ h6 {
   }
 }
 
-.p3_1 p{
+.p3_1 div{
 	border: solid 1px #108977;
 }
 
-
+.story{
+	font-size: 0.8rem;
+	color: rgba(0, 0, 0, 0.73);
+	line-height: 1.3rem;
+}
 
 
 footer{
