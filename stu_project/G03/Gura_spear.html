@@ -1,0 +1,3134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.52.0/dist/phaser.min.js"></script>
+
+    <style type="text/css">
+        body
+        {
+            
+            margin:0;
+            padding:0;
+        }
+
+    </style>
+</head>
+<body>
+    
+    <script>
+        const config = 
+        {
+            type   : Phaser.AUTO,
+            width  : 1066,
+            height : 600,
+            
+            
+
+            physics: 
+            {
+                default: 'arcade',
+                arcade : 
+                {
+                    gravity: {y: 500},
+                    debug:false
+
+                }
+            },
+
+            scene  : 
+            {
+                preload: preload,
+                create : create,
+                update : update
+            }
+        };
+
+        const game = new Phaser.Game(config);
+        //=========================================DEFINE========================================
+
+        //Prevent multiple damage
+        let damaged =false;
+        //Cookie Value
+        let cookieValue;
+        //First load in page
+        let firstLoad = 0;
+        //door 1 unlock
+        let unlocked = 0;
+        
+        //motion light;
+        let motionLight_1;
+        let motionLight_2;
+        //playerTouchPlat
+        let pTouchPlat = 0;
+        //Additional Jump
+        let additionalJump = 1;
+        let addJump = 1;
+
+        //HP percentage
+        let hpPercentage;
+        let HpBarStroke;
+        let HpBarRed;
+        let HpBarWhite;
+
+        //SpearEffect
+        let particles_spear;
+        let emitter_spear;
+        let player_spear;
+        let spear_situation;
+
+        //Boss animation 
+        let bossAnimSitu = 0;
+        let bossAnimCoverAcess = 0;
+        let bossAnimationTimer = 1.2;
+        let onBossLeft = false;
+        let onBossRight = false;
+        
+        let bossDead = false;
+        let cap;
+        let capText;
+        //Shop
+        let shopText;
+        //NENE animation
+        let NENEAnimSitu = 0;
+        let NENEAnimCoverAcess = 0;
+        let NENEDirection = 0;
+
+        //Instructions
+        let restartText;
+        let lockText1;
+        let turText1;
+        let Etext;
+
+        //tur situation
+        let firstDoubleJump = 0;
+        let firstWallJump = 0;
+
+        let check = 0;
+
+        //星星與分數
+        let pick = 0;
+        let score = 0;
+        let pickedStar = 0;
+        let scoreText;
+
+        //炸彈
+        let gameOver = false;
+
+        //玩家腳底座標
+        let playerF;
+        let playerS;
+
+        //玩家即時Y速度計算器
+        let pY1;
+        let pY2;
+        let pYV;
+
+        //玩家即時X速度計算器
+        let pX1;
+        let pX2;
+        let pXV;
+
+        //玩家周遭判定器
+        let playerSuround;
+        let san = 0;
+        let Pl = 0;
+
+        //WASD
+        let W;
+        let A;
+        let S;
+        let D;
+
+        //Pound Shaking
+        let pound = 0;
+
+        
+
+        let platforms;
+        let player;
+        let cursors;
+        let tempVX = 0;
+        let easingVX;
+        let doubleJump  = 1;
+        let doubleJump2 = 0;
+        //===============測試LET===============
+        let fire;
+        let fire_1;
+        let fire_2;
+
+        let firearea;
+        let EN;
+        let ENSuround;
+        let ENPtimer;
+        let ENStimer;
+        let EN2;
+        let EN2Suround;
+        let EN2Ptimer;
+        let EN2Stimer;
+        let Sd;
+        let aim;
+        //
+        let aimPx1;
+        let aimPx2;
+        let aimPxV;
+
+        let mouseX;
+        let mouseY;
+        let shoot=false;
+        let arrow;
+        let weaponHead;
+        let weapon;
+        let angle;
+        let Mouse;
+
+        //道具
+        let jumper;
+        let j=1;
+        let sanser;
+        let s=1;
+        let arrower;
+        let a=1;
+
+        //----------------BOSS-------------------
+        // let Boss;
+        let boss1;
+        let bossX;
+        let bossY;
+        let showboss=false;
+        //boss血條
+        let life_b =150;
+        let missile;
+        let missile1;
+        let missile2;
+        let missile3;
+        let missile4;
+        let missile5;
+
+        let emitter_missile_1;
+        let emitter_missile_2;
+        let emitter_missile_3;
+        let emitter_missile_4;
+        let emitter_missile_5;
+        
+        
+        //落下攻擊
+        let shots;
+        let shot1;
+        let shot2;
+        let shot3;
+        let shot4;
+        let shot5;
+
+        //標記
+        let tags;
+
+        //追蹤飛彈
+        let missiles;
+        //Timer
+        let att;
+        let att2;
+        let att3;
+        let att4;
+        let att5;
+
+        //互動
+        let E;
+        //=========================================PRELOAD==========================================
+        function preload()
+        {
+
+            //__________________Enviroment Element_____________________
+            this.load.image('base','assets/sky2.png');
+            this.load.image('bg','assets/battle2.png');
+            this.load.image('light','assets/battle2-light.png');
+            this.load.image('F1','assets/F_1.png');
+            this.load.image('G1','assets/G_1.png');
+            this.load.image('G2','assets/G_2.png');
+            this.load.image('G3','assets/G_3.png');
+            this.load.image('G4','assets/G_4.png');
+            this.load.image('P1','assets/P_1.png');
+            this.load.image('P2','assets/P_2.png');
+            this.load.image('P3','assets/P_3.png');
+            this.load.image('P4','assets/P_4.png');
+            this.load.image('P5','assets/P_5.png');
+            this.load.image('P6','assets/P_6.png');
+            this.load.image('P7','assets/P_7.png');
+            this.load.image('W1','assets/W_1.png');
+            
+            this.load.image('Pool','assets/firePoolCover.png');
+            this.load.image('extendGround','assets/groundExtend.png')
+
+            //________________________Item_____________________________
+            this.load.image('star','assets/star.png');
+                //Boss
+            //落下攻擊
+            this.load.image('shot','assets/star.png');
+            //標記
+            this.load.image('tag','assets/Target.png');
+            //追蹤飛彈
+            this.load.image('missile','assets/door.png');
+            //獎盃
+            this.load.image('cap','assets/door.png');
+
+            //HP Bar
+            this.load.image('HpBarRed','assets/HP_Bar_Red.png');
+            this.load.image('HpBarWhite','assets/HP_Bar_White.png');
+            this.load.image('HpBarStroke','assets/HP_Bar_Stroke.png');
+            //___________________Visual Effect_________________________
+            this.load.image('step','assets/Fish.png');
+            this.load.image('spear','assets/Gura_spear.png');
+            this.load.image('flame','assets/Flame.png');
+            this.load.image('SpearEffect','assets/Spear_Effect.png');
+            this.load.image('PekoraEmitter','assets/Pekora_Emitter.png');
+            //______________________Sound Effect_______________________
+            this.load.audio("A"     ,['assets/Gura_a.mp3']);
+            this.load.audio("Music" ,['assets/BGM_More.mp3']);
+            this.load.audio("Shout" ,['assets/Gura_shout.mp3']);
+            this.load.audio("Win"   ,['assets/Ejected.mp3']);
+            this.load.audio("Moving",['assets/FootStep.mp3']);
+            this.load.audio("Jump"  ,['assets/JumpSound.mp3']);
+            this.load.audio("NewAme",['assets/AreYouWinning.mp3']);
+            this.load.audio("Breath",['assets/SharkBreath.mp3']);
+            this.load.audio("Throw",['assets/guraThrowFork.mp3']);
+            this.load.audio("Fire",['assets/Fire_Sound_Effect.mp3']);
+            this.load.audio("PekoraBGM",['assets/Pekora_BGM.mp3']);
+            this.load.audio("BassDrop",['assets/BassDrop.mp3']);
+            this.load.audio("ThrowSpear",['assets/ThrowSpear.mp3']);
+            this.load.audio("SpearStick",['assets/SpearStick.mp3']);
+            this.load.audio("PekoraShowUp",['assets/Pekora_ShowUp.mp3']);
+            this.load.audio("PekoraHit",['assets/Pekora_Hit.mp3']);
+            this.load.audio("PekoraSkill",['assets/Pekora_Skill.mp3']);
+            this.load.audio("PekoraSlap",['assets/Pekora_Slap.mp3']);
+            this.load.audio("PekoraLose",['assets/Pekora_Lose.mp3']);
+            this.load.audio("PekoraWin",['assets/Pekora_Win.mp3']);
+            this.load.audio("NENESound",['assets/NENE_Sound.mp3']);
+
+            this.load.audio("MissileHover",['assets/Missile_Hover.mp3']);
+            this.load.audio("MissileLockOn",['assets/Missile_LockOn.mp3']);
+            this.load.audio("MissileExplode",['assets/MissileExplode.mp3']);
+            this.load.audio("MissileLaunch",['assets/MissileLaunch.mp3']);
+            
+            this.load.audio("SwitchWrong",['assets/Switch_Wrong.mp3']);
+
+            this.load.audio("Cash",['assets/Cash.mp3']);
+            //________________________Sprite_____________________________
+            this.load.spritesheet('dude','assets/Gura_add.png',
+            {frameWidth: 32, frameHeight: 48});
+
+            //Ame spriteSheet
+            this.load.spritesheet('Ame','assets/Ame_add.png',
+            {frameWidth: 28, frameHeight: 28});
+
+
+            //玩家周遭範圍
+            this.load.spritesheet('Suround','assets/Suround.png',
+            {frameWidth:140,frameHeight:100});
+
+            //Boss
+            this.load.spritesheet('boss','assets/Sprite_Full.png',
+            {frameWidth: 200, frameHeight: 240});
+
+            //NENE
+            this.load.spritesheet('EN','assets/neneSeal.png',
+            {frameWidth:80,frameHeight:50});
+
+            //================測試圖片IMAGE===================
+            this.load.image('fire','assets/fireball.png');
+            this.load.image('door','assets/door.png');
+            //this.load.image('EN','assets/enemy2.png');
+            this.load.image('door','assets/door.png');
+            this.load.image('aim','assets/Aim.png');
+            this.load.image('arrow','assets/arrow.png');
+            this.load.image('arrow','assets/arrowHead.png');
+            //衝刺判定範圍
+            this.load.image('ENSuround','assets/ENSuround.png');
+            this.load.image('EN2Suround','assets/EN2Suround.png');
+            //道具
+            this.load.image('arrower','assets/arrower.png');
+            this.load.image('sanser','assets/sanser.png');
+            this.load.image('jumper','assets/jumper.png');
+        }
+            
+        
+
+        
+        
+        
+        
+        //=========================================CREATE========================================
+        function create()
+        {
+            this.cameras.main.fadeIn(1000);
+            
+            //____________________Sound Effect_____________________________
+            Aa = this.sound.add("A",{loop: false}); 
+            SharkShout = this.sound.add("Shout",{loop:false});
+            SharkWin = this.sound.add("Win",{loop:false});
+            
+            Amespawn = this.sound.add("NewAme",{loop:false});
+            
+            Cash = this.sound.add("Cash",
+            {
+                loop:false,
+                volume:1
+            });
+            
+            SwitchWrong = this.sound.add("SwitchWrong",
+            {
+                loop:false,
+                volume:1
+            });
+            
+            NENESound = this.sound.add("NENESound",
+            {
+                loop:false,
+                volume:0.35
+            });
+
+            MissileHover = this.sound.add("MissileHover",
+            {
+                loop:true,
+                volume:0.8
+            });
+
+            MissileLaunch = this.sound.add("MissileLaunch",
+            {
+                loop:false,
+                volume:1
+            });
+            MissileLockOn = this.sound.add("MissileLockOn",
+            {
+                loop:false,
+                volume:1.2
+            });
+            MissileExplode = this.sound.add("MissileExplode",
+            {
+                loop:false,
+                volume:1.5
+            });
+
+            
+            PekoraShowUp = this.sound.add("PekoraShowUp",
+            {
+                loop:false,
+                volume:0.5
+            });
+
+            PekoraWin = this.sound.add("PekoraWin",
+            {
+                loop:false,
+                volume:0.7
+            });
+
+            PekoraHit = this.sound.add("PekoraHit",
+            {
+                loop:false,
+                volume:0.8
+            });
+
+            PekoraSkill = this.sound.add("PekoraSkill",
+            {
+                loop:false,
+                volume:0.9
+            });
+
+            PekoraSlap = this.sound.add("PekoraSlap",
+            {
+                loop:false,
+                volume:0.7
+            });
+
+            PekoraLose = this.sound.add("PekoraLose",
+            {
+                loop:false,
+                volume:2.5
+            });
+
+            ThorwSpear = this.sound.add("ThrowSpear",
+            {
+                loop:false,
+                volume:0.3
+            });
+
+            SpearStick = this.sound.add("SpearStick",
+            {
+                loop:false,
+                volume:0.3
+            });
+            
+            Fire = this.sound.add("Fire",
+            {
+                loop:true,
+                volume:0.1
+            });
+
+            Throw = this.sound.add("Throw",
+            {
+                loop:false,
+                volume:0.5
+            });
+            
+            SharkBreath = this.sound.add("Breath",
+            {
+                loop:true,
+                volume:0.8
+            });
+            
+            SharkJump = this.sound.add("Jump",
+            {
+                loop:false,
+                rate:1.2,
+                volume:0.3
+            });
+
+
+            SharkSteps = this.sound.add("Moving",
+            {
+                loop:true,
+                rate:0.85,
+                volume:0.15
+            });
+
+            
+            BackgroundMusic = this.sound.add("Music",
+            {
+                loop:true,
+                volume:0.2
+            
+            });
+
+            PekoraBGM = this.sound.add("PekoraBGM",
+            {
+                loop:true,
+                volume:0.2
+            });
+
+            BassDrop = this.sound.add("BassDrop",
+            {
+                loop:false,
+                rate:1.2,
+                volume:0.2
+            });
+            
+            Fire.play();
+            BackgroundMusic.play();
+
+            //_________________________Timer______________________________
+            this.time.addEvent(
+                {
+                    delay:17,
+                    callback:()=>
+                    {
+                        pY2 = pY1;
+                        pX2 = pX1;
+                    },   
+                    loop:true
+                });
+            
+            
+            //_______________________Enviroment___________________________
+
+            
+             
+            this.add.image(400,300,'base').setScale(1.9,1.2).setScrollFactor(0.1);
+                //原物件===============================
+            platforms = this.physics.add.staticGroup();
+
+            platforms.create(273/2,480+224/2,'G1');
+            platforms.create(272+303/2,566+136/2,'G2');
+            platforms.create(570+185/2,420+284/2,'G3');
+            platforms.create(950+189/2,425+172/2,'G4');
+            platforms.create(50+301/2,233+27/2,'P1');
+            platforms.create(407+69/2,312+68/2,'P2').setVisible(false);
+            platforms.create(584+92/2,171+30/2,'P3');
+            platforms.create(715+306/2,291+32/2,'P4').setScale(0.8,1).refreshBody();
+            platforms.create(715+15,265+28,'P5').setScale(1,2).refreshBody();
+            platforms.create(988+15,265+28,'P5').setScale(1,2).refreshBody();
+            platforms.create(1128+40,185+14/2,'P6');
+            platforms.create(1270+114/2,570+25/2,'P7');
+            platforms.create(1348,290,'W1');
+
+            
+            //edge
+            platforms.create(750,-10,'P1').setScale(5,1).refreshBody();
+            platforms.create(750,705,'P1').setScale(5,1).refreshBody();
+            
+            platforms.create(-15,150,'W1').setScale(1,3).refreshBody();
+            platforms.create(1515,350,'W1').setScale(1,3).refreshBody();
+            
+            firearea=this.physics.add.image(755+746/2,590+110/2,'F1');
+            firearea.setCollideWorldBounds(true);
+            
+            //___________________________________下雪特效__________________________________
+            let particles3 = this.add.particles('step');
+            let emitter3 = particles3.createEmitter(
+                {
+                    x        : 100,
+                    y        : -50,
+                    
+                    speed    : 400,
+                    scale    : {start: 0.7,end: 0.2},
+                    alpha    : {start: 0.4,end: 0},
+
+                    rotate: Phaser.Math.Between(0,360),
+
+                    accelerationX:-200,
+                    accelerationY:-40,
+                    lifespan:{min:2500,max:3500},
+
+
+                    blendMode: 'SCREEN'
+                }).setScrollFactor(0);
+
+            let particles4 = this.add.particles('step');
+            let emitter4 = particles4.createEmitter(
+                {
+                    x        : 250,
+                    y        : -50,
+                    
+                    speed    : 400,
+                    scale    : {start: 0.6,end: 0},
+                    alpha    : {start: 0.4,end: 0},
+
+                    rotate: Phaser.Math.Between(0,360),
+
+                    accelerationX:-200,
+                    accelerationY:-40,
+                    lifespan:{min:2500,max:3500},
+
+
+                    blendMode: 'SCREEN'
+                }).setScrollFactor(0);
+
+                let particles5 = this.add.particles('step');
+            let emitter5 = particles5.createEmitter(
+                {
+                    x        : 400,
+                    y        : -50,
+                    
+                    speed    : 400,
+                    scale    : {start: 0.7,end: 0},
+                    alpha    : {start: 0.4,end: 0},
+
+                    rotate: Phaser.Math.Between(0,360),
+
+                    accelerationX:-200,
+                    accelerationY:-40,
+                    lifespan:{min:2500,max:3500},
+                    
+
+
+                    blendMode: 'SCREEN'
+                }).setScrollFactor(0);
+
+                let particles6 = this.add.particles('step');
+            let emitter6 = particles6.createEmitter(
+                {
+                    x        : 550,
+                    y        : -50,
+                    
+                    speed    : 400,
+                    scale    : {start: 0.6,end: 0},
+                    alpha    : {start: 0.4,end: 0},
+
+                    rotate: Phaser.Math.Between(0,360),
+
+                    accelerationX:-200,
+                    accelerationY:-40,
+                    lifespan:{min:2500,max:3500},
+
+
+                    blendMode: 'SCREEN'
+                }).setScrollFactor(0);
+
+                let particles7 = this.add.particles('step');
+            let emitter7 = particles7.createEmitter(
+                {
+                    x        : 700,
+                    y        : -50,
+                    
+                    speed    : 400,
+                    scale    : {start: 0.7,end: 0},
+                    alpha    : {start: 0.4,end: 0},
+
+                    rotate: Phaser.Math.Between(0,360),
+
+                    accelerationX:-200,
+                    accelerationY:-40,
+                    lifespan:{min:2500,max:3500},
+
+
+                    blendMode: 'SCREEN'
+                }).setScrollFactor(0);
+
+                let particles8 = this.add.particles('step');
+            let emitter8 = particles8.createEmitter(
+                {
+                    x        : 850,
+                    y        : -50,
+                    
+                    speed    : 400,
+                    scale    : {start: 0.6,end: 0},
+                    alpha    : {start: 0.4,end: 0},
+
+                    rotate: Phaser.Math.Between(0,360),
+
+                    accelerationX:-200,
+                    accelerationY:-40,
+                    lifespan:{min:2500,max:3500},
+
+
+                    blendMode: 'SCREEN'
+                }).setScrollFactor(0);
+            
+            //________________________________________背景疊加____________________________
+            this.add.image(0,0,'bg').setOrigin(0,0);
+            
+            //BOSS群組
+                
+                //落下攻擊群組
+            shots = this.physics.add.group();
+
+                //標記群組
+            tags = this.physics.add.group();
+
+                //追蹤飛彈群組
+            missiles = this.physics.add.group();
+            
+            //_______________________________腳步特效____________________________________
+            let particles = this.add.particles('step');
+            let emitter = particles.createEmitter(
+                {
+                    speed    : 30,
+                    scale    : {start: 1.1,end: 0},
+                    alpha    : {start: 1,end: 0.4},
+
+                    accelerationX:-200,
+                   
+                    
+                    blendMode: 'SCREEN'
+                });
+            
+            //三叉戟特效
+            let particles2 = this.add.particles('spear');
+            let emitter2 = particles2.createEmitter(
+                {
+                    speed    : 200,
+                    scale    : {start: 0.6,end: 0},
+                    alpha    : {start: 1,end: 0.4},
+                    
+                    accelerationX:-400,
+                    accelerationY:300,
+
+                    blendMode: 'ADD'
+                });
+            
+            
+            
+            
+            //玩家周遭
+            playerSuround = this.physics.add.sprite(100,450,'Suround');
+            playerSuround.setBounce(false);
+            playerSuround.setCollideWorldBounds(false);
+            playerSuround.setGravity(false);
+            playerSuround.setVisible(false);
+            
+            playerSuround.setImmovable();
+                
+
+            //三叉戟
+            weaponHead=this.physics.add.sprite(400,180,'arrow').setOrigin(0.5,0).setScale(0.1).setVisible(false).refreshBody();
+             weaponHead.body.setAllowGravity(false);
+             weaponHead.setBounce(1);
+            //  weaponHead.setCollideWorldBounds(true);
+             weapon=this.physics.add.sprite(400,180,'arrow').setOrigin(0.5,0.5).setScale(2,1.4).setBlendMode('ADD').refreshBody();
+             weapon.body.setAllowGravity(false);
+             weapon.setRotation(Math.PI*3/2);
+             arrow=this.physics.add.sprite(0,0,'arrow').setOrigin(0.5,0.5).setScale(2,1.4).setVisible(false).refreshBody();
+             arrow.body.setAllowGravity(false);
+            
+            //玩家與地圖碰撞
+            player = this.physics.add.sprite(250,210,'dude');
+            this.cameras.main.setBounds(0,0,1500,700);
+            this.cameras.main.startFollow(player);
+            this.cameras.main.setSize(1066, 600);
+            this.cameras.main.setLerp(0.07,0.07);
+            this.cameras.main.setZoom(1.4);
+
+            player.setBounce(0);
+            player.setCollideWorldBounds(true);
+            this.physics.world.bounds.width=1500;
+            this.physics.world.bounds.height=700;
+
+           
+            //玩家腳底
+            playerF = this.add.sprite(100,450,'dude');
+            playerF.setVisible(false);
+
+            playerS = this.add.sprite(100,450,'dude');
+            playerS.setVisible(false);
+            
+            //玩家標槍座標
+            player_spear = this.add.sprite(-100,-100,'dude');
+            player_spear.setVisible(false);
+            //______________________Gura animation set_______________________________
+            this.anims.create(
+                {
+                    key: 'left',
+                    frames: this.anims.generateFrameNumbers('dude',{start: 0,end: 3}),
+                    frameRate: 12,
+                    repeat: -1
+                });
+
+            this.anims.create(
+            {
+                key: 'turn',
+                frames:[{key: 'dude',frame: 4}],
+                frameRate: 20
+            });
+
+            this.anims.create(
+                {
+                    key: 'right',
+                    frames: this.anims.generateFrameNumbers('dude',{start: 5,end: 8}),
+                    frameRate:12,
+                    repeat:-1
+                });
+            
+            this.anims.create(
+                {
+                    key:'down',
+                    frames:[{key:'dude',frame:9}],
+                    frameRate:1
+                })
+
+            this.anims.create(
+                {
+                    key:'JumpLeft',
+                    frames:[{key:'dude',frame:2}],
+                    frameRate:12,
+                    repeat:-1
+                })
+            
+            this.anims.create(
+                {
+                    key:'JumpRight',
+                    frames:[{key:'dude',frame:5}],
+                    frameRate:12,
+                    repeat:-1
+                })
+
+            //____________________________________Boss animation set_________________________
+            this.anims.create(
+                {
+                    key:'BossLeftStandby',
+                    frames:this.anims.generateFrameNumbers('boss',{start: 0,end: 5}),
+                    frameRate:8,
+                    repeat:-1
+                });
+
+            this.anims.create(
+                {
+                    key:'BossRightStandby',
+                    frames:this.anims.generateFrameNumbers('boss',{start: 13,end: 18}),
+                    frameRate:8,
+                    repeat:-1
+                });
+            
+            this.anims.create(
+                {
+                    key:'BossLeftHit',
+                    frames:this.anims.generateFrameNumbers('boss',{frames:[6,7,8,8,8,8]}),
+                    frameRate:8,
+                    repeat:0
+                });
+
+            this.anims.create(
+                {
+                    key:'BossRightHit',
+                    frames:this.anims.generateFrameNumbers('boss',{frames:[19,20,21,21,21,21]}),
+                    frameRate:8,
+                    repeat:0
+                });
+            
+            this.anims.create(
+                {
+                    key:'BossLeftSkill',
+                    frames:this.anims.generateFrameNumbers('boss',{frames:[9,10,11,12,12,12,12]}),
+                    frameRate:8,
+                    repeat:0
+                });
+            
+            this.anims.create(
+                {
+                    key:'BossRightSkill',
+                    frames:this.anims.generateFrameNumbers('boss',{frames:[22,23,24,25,25,25,25]}),
+                    frameRate:8,
+                    repeat:0
+                });
+            
+            //_____________________________________NENE animation set_____________________________
+                this.anims.create(
+                {
+                    key:'NENELeftWalk',
+                    frames:this.anims.generateFrameNumbers('EN',{frames:[0,1,2,3]}),
+                    frameRate:8,
+                    repeat:-1
+                });
+
+                this.anims.create(
+                {
+                    key:'NENELeftRun',
+                    frames:this.anims.generateFrameNumbers('EN',{frames:[0,1,2,3]}),
+                    frameRate:24,
+                    repeat:-1
+                });
+
+                this.anims.create(
+                {
+                    key:'NENERightWalk',
+                    frames:this.anims.generateFrameNumbers('EN',{frames:[5,6,7,8]}),
+                    frameRate:8,
+                    repeat:-1
+                });
+
+                this.anims.create(
+                {
+                    key:'NENERightRun',
+                    frames:this.anims.generateFrameNumbers('EN',{frames:[5,6,7,8]}),
+                    frameRate:24,
+                    repeat:-1
+                });
+                
+                this.anims.create(
+                {
+                    key:'NENELeftAlert',
+                    frames:this.anims.generateFrameNumbers('EN',{frames:[4]}),
+                    frameRate:8,
+                    repeat:0
+                });
+
+                this.anims.create(
+                {
+                    key:'NENERightAlert',
+                    frames:this.anims.generateFrameNumbers('EN',{frames:[9]}),
+                    frameRate:8,
+                    repeat:0
+                });
+
+                this.anims.create(
+                {
+                    key:'NENELeftStandby',
+                    frames:this.anims.generateFrameNumbers('EN',{frames:[0]}),
+                    frameRate:8,
+                    repeat:0
+                });
+                
+                this.anims.create(
+                {
+                    key:'NENERightStandby',
+                    frames:this.anims.generateFrameNumbers('EN',{frames:[5]}),
+                    frameRate:8,
+                    repeat:0
+                });
+                //_____________________________________Ame animation set_________________________
+            this.anims.create(
+                {
+                    key: 'AmeLeft',
+                    frames:[{key:'Ame',frame:4}],
+                    frameRate:20
+
+                })
+            
+            this.anims.create(
+                {
+                    key: 'AmeRight',
+                    frames:[{key:'Ame',frame:5}],
+                    frameRate:20
+                })
+            
+            this.anims.create(
+                {
+                    key: 'AmeLeftRotate',
+                    frames: this.anims.generateFrameNumbers('Ame',{start: 3,end: 0}),
+                    frameRate:8,
+                    repeat:-1
+                })
+
+            this.anims.create(
+                {
+                    key: 'AmeRightRotate',
+                    frames: this.anims.generateFrameNumbers('Ame',{start: 6,end: 9}),
+                    frameRate:8,
+                    repeat:-1
+                })
+
+            //方向鍵操控
+            cursors = this.input.keyboard.createCursorKeys();
+
+            // this.cursors = this.input.keyboard.addKeys(
+            // {
+            //     up   :Phaser.Input.Keyboard.KeyCodes.W,
+            //     down :Phaser.Input.Keyboard.KeyCodes.S,
+            //     left :Phaser.Input.Keyboard.KeyCodes.A,
+            //     right:Phaser.Input.Keyboard.KeyCodes.D
+            // });
+
+           //W A S D操控
+            
+            W = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+            A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+            S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+            D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+            E = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+            //Test Collider
+            this.physics.add.collider(player,platforms,playerTouchPlat,null,this);
+            
+            
+
+            emitter2.startFollow(playerS);
+            
+            
+            emitter.startFollow(playerF);
+
+            
+
+            
+            
+               //===========================測試CREATE================================
+
+            fire_1 = this.physics.add.image(853,375,'fire').setScale(0.7).refreshBody();
+            fire_2 = this.physics.add.image(1205,375,'fire').setScale(0.7).refreshBody();
+            
+            fire_1.setCollideWorldBounds(true);
+            fire_1.setBounce(1);
+            fire_1.setAllowGravity = true;
+            fire_2.setCollideWorldBounds(true);
+            fire_2.setBounce(1);
+            fire_2.setAllowGravity = true;
+            
+            //_______________________________Flame Effect________________________________
+            let particles_flame_1 = this.add.particles('flame');
+            let emitter_flame_1 = particles_flame_1.createEmitter(
+                {
+                    speed    : 40,
+                    scale    : {start: 1.2,end: 0},
+                    alpha    : {start: 0.8,end: 0.3},
+
+                    rotate:{min:-180,max:180},
+                    accelerationY:500,
+                    quantity:4,
+                    frequency:100,
+                    lifespan:{min:300,max:600},
+
+                    blendMode: 'ADD'
+                });
+
+            let particles_flame_2 = this.add.particles('flame');
+            let emitter_flame_2 = particles_flame_2.createEmitter(
+                {
+                    speed    : 40,
+                    scale    : {start: 1.2,end: 0},
+                    alpha    : {start: 0.8,end: 0.3},
+
+                    rotate:{min:-180,max:180},
+                    accelerationY:500,
+                    quantity:4,
+                    frequency:100,
+                    lifespan:{min:300,max:600},
+
+                    blendMode: 'ADD'
+                });
+            
+            emitter_flame_1.startFollow(fire_1);
+            emitter_flame_2.startFollow(fire_2);
+            
+            //____________________________標槍特效___________________________
+            particles_spear = this.add.particles('SpearEffect');
+            emitter_spear = particles_spear.createEmitter(
+                {
+                    speed    : 0,
+                    scale    : {start: 1.8,end: 0},
+                    alpha    : {start: 0.7,end: 0},
+                    rotate   : {min:-180,max:180},
+                    
+                    quantity:3,
+                    frequency:1,
+                    lifespan:600,
+
+                    blendMode: 'ADD'
+                });
+            
+            emitter_spear.startFollow(player_spear);
+
+            //______________________________岩漿 特效______________________________
+            let particles_fire_1 = this.add.particles('flame');
+            let emitter_fire_1 = particles_fire_1.createEmitter(
+                {
+                    x        : 853,
+                    y        : 900,
+                    
+                    speed    : 150,
+                    scale    : {start: 0.7,end: 0.2},
+                    alpha    : {start: 0.8,end: 0.3},
+
+                    rotate:{min:-180,max:180},
+                    accelerationY:-50,
+                    lifespan:{min:2000,max:3000},
+
+
+                    blendMode: 'ADD'
+                });
+
+            let particles_fire_2 = this.add.particles('flame');
+            let emitter_fire_2 = particles_fire_2.createEmitter(
+                {
+                    x        : 1100,
+                    y        : 900,
+                    
+                    speed    : 150,
+                    scale    : {start: 0.7,end: 0.2},
+                    alpha    : {start: 0.8,end: 0.3},
+
+                    rotate:{min:-180,max:180},
+                    accelerationY:-50,
+                    lifespan:{min:2000,max:3000},
+
+
+                    blendMode: 'ADD'
+                });
+
+            let particles_fire_3 = this.add.particles('flame');
+            let emitter_fire_3 = particles_fire_3.createEmitter(
+                {
+                    x        : 1350,
+                    y        : 900,
+                    
+                    speed    : 150,
+                    scale    : {start: 0.7,end: 0.2},
+                    alpha    : {start: 0.8,end: 0.3},
+
+                    rotate:{min:-180,max:180},
+                    accelerationY:-50,
+                    lifespan:{min:2000,max:3000},
+
+
+                    blendMode: 'ADD'
+                });
+
+            //________________________岩漿上層______________________________
+            this.add.image(0,0,'Pool').setOrigin(0,0);
+                
+             //____________________________衝刺敵人______________________________
+             EN = this.physics.add.sprite(425,525,'EN').setScale(0.6).refreshBody();
+             EN2 = this.physics.add.sprite(860,280,'EN').setScale(0.6).refreshBody();
+             EN.exists=true;
+             EN2.exists=true;
+             EN.setCollideWorldBounds(true);
+             EN2.setCollideWorldBounds(true);
+             
+              
+
+              //衝刺範圍
+            ENSuround = this.physics.add.sprite(425,515,'ENSuround');
+            ENSuround.setBounce(0);
+            ENSuround.body.setAllowGravity(false);
+            ENSuround.setVisible(false);
+            ENSuround.setImmovable();
+
+            EN2Suround = this.physics.add.sprite(870,280,'EN2Suround');
+            EN2Suround.setBounce(0);
+            EN2Suround.setCollideWorldBounds(false);
+            EN2Suround.body.setAllowGravity(false);
+            EN2Suround.setVisible(false);
+            EN2Suround.setImmovable();
+
+            //道具
+              
+            jumper = this.physics.add.image(100,210,'jumper');
+            sanser = this.physics.add.image(150,210,'sanser');
+            arrower = this.physics.add.image(200,210,'arrower');
+            cap =this.physics.add.sprite(0,0,'cap').setVisible(false);
+            cap.body.setAllowGravity(false);
+
+
+            //_________________________________UI Below_____________________________________________
+            //計分
+            scoreText = this.add.text(160,90,'Score:0',{font:'32px Arial Black',backgroundColor:'rgba(0,0,0,0.4)',color:'white',fixedWidth:200}).setScrollFactor(0);
+
+            //boss血條
+            
+            //lifeText.visible = false;
+            //Shop
+            shopText = this.add.text(50,100,'None',{font:'24px Arial Black',backgroundColor:'rgba(0,0,0,0.6)',color:'white',fixedWidth:300}).setVisible(false);
+            //E
+            Etext=this.add.text(1930,400,'E',{font:'36px Arial Black',backgroundColor:'rgba(51,68,102,0.8)',color:'white',fixedWidth:28}).setOrigin(0.5);
+            Etext.scene.tweens.add(
+            {
+                targets: Etext,
+                scaleX:1,
+                scaleY:1,
+                alpha:0,
+                ease:'Linear',
+                duration:600,
+                repeat:-1,
+                yoyo:true
+            });
+            //cap
+            capText=this.add.text(cap.x,cap.y,'Prees"E" back to Menu',{font:'24px Arial Black',backgroundColor:'rgba(0,0,0,0.6)',color:'white',fixedWidth:300}).setOrigin(0.5).setVisible(false);
+            //Restart
+            restartText = this.add.text(config.width/2-100,config.height/2-40,'Restart',
+            {
+                font:'40px Arial Black',
+                color:'white',
+                stroke:'red',
+                padding:10,
+                backgroundColor:'rgba(0,0,0,0.4)'
+            }).setScrollFactor(0);
+            
+            restartText.visible = false;
+                
+            restartText.setInteractive().on('pointerdown',(pointer,localX,localY,event)=>
+            {
+                firstLoad = 0;
+                
+                life_b = 150;
+                unlocked = 0;
+                score = 0;
+                pickedStar = 0;
+                firstDoubleJump = 0;
+                firstWallJump = 0;
+                tempVX = 0;
+                j=1;
+                s=1;
+                a=1;
+                this.time.paused=false;
+                bossAnimCoverAcess =0;
+                bossAnimationTimer = 1.2;
+                onBossLeft  = false;
+                onBossRight = false;
+                bossDead = false;
+                showboss=false;
+                gameOver = false;
+                NENESound.pause();
+                this.scene.restart();
+                
+            });
+            
+            //準心
+            aim=this.add.image(0,0,'aim').setOrigin(0.5,0.5).setScale(0.5).setScrollFactor(0).setVisible(false);
+            
+            //lock 1
+            
+            
+            //tur Text
+            //turText1 = this.add.text(0,400,'         Press\n       "WASD"  \n to move around',{font:'24px Arial Black',backgroundColor:'rgba(0,0,0,0.4)',color:'white',fixedWidth:220});        
+
+            
+            //this.cameras.main.ignore([scoreText,restartText]);
+
+            //_________________________________UI Ends________________________________________________
+
+             
+            
+             
+             
+             
+
+
+             //靠近玩家
+             this.physics.add.overlap(playerSuround,fire_1,GuraBreath,null,this);
+             this.physics.add.overlap(playerSuround,fire_2,GuraBreath,null,this);
+             this.physics.add.overlap(playerSuround,EN,GuraBreath,null,this);
+             this.physics.add.overlap(playerSuround,EN2,GuraBreath,null,this);
+             this.physics.add.overlap(player,weaponHead,pickArrow,null,this);
+             this.physics.add.overlap(player,weapon,pickArrow,null,this);
+             
+            
+             
+            
+
+
+            //碰撞
+                this.physics.add.collider(EN,platforms);
+                this.physics.add.collider(EN2,platforms);
+                this.physics.add.collider(jumper,platforms);
+                this.physics.add.collider(sanser,platforms);
+                this.physics.add.collider(arrower,platforms);
+                this.physics.add.overlap(player,jumper,jump,null,this);
+                this.physics.add.overlap(player,arrower,shot,null,this);
+                this.physics.add.overlap(player,sanser,sans,null,this);
+                this.physics.add.collider(player,EN2,hitEN,null,this);
+                this.physics.add.collider(player,EN,hitEN,null,this);
+                this.physics.add.collider(player,fire_1,hitFire,null,this);
+                this.physics.add.collider(player,fire_2,hitFire,null,this);
+                this.physics.add.collider(player,firearea,hitFire,null,this);
+                this.physics.add.collider(weaponHead,platforms,drop,null,this);
+                this.physics.add.collider(weaponHead,this.physics.world.up,drop,null,this);
+                
+
+                
+                //Boss
+                // this.physics.add.collider(boss1, platforms);
+                
+                //追蹤飛彈靠近玩家
+                this.physics.add.overlap(playerSuround,missiles,GuraBreath,null,this);
+                //落下攻擊著地設定
+                this.physics.add.collider(platforms,shots,land,null,this);
+                 //落下攻擊碰撞
+                this.physics.add.collider(shots,platforms);
+                this.physics.add.overlap(player,shots,hitShot,null,this);
+                
+
+                //追蹤飛彈碰撞
+                this.physics.add.collider(player,missiles,hitMissile,null,this);
+
+                //追蹤飛彈著地
+                this.physics.add.collider(platforms,missiles,explode,null,this);
+
+
+                //滑鼠
+                this.input.on('pointerup',launch,this);
+                
+
+                //巡邏時間
+                ENPtimer=this.time.addEvent({ delay: 11000,callbackScope: this, loop: true });
+                EN2Ptimer=this.time.addEvent({ delay: 11000,callbackScope: this, loop: true });
+                //衝刺時間
+                ENStimer=this.time.addEvent({ delay: 1500, callbackScope: this, loop: true });
+                EN2Stimer=this.time.addEvent({ delay: 1500, callbackScope: this, loop: true });
+
+                CD=this.time.addEvent({delay: 5000, callbackScope: this, loop: true });
+                CD.elapsed=4000;
+                CD.paused=true;
+                ArrowReturn=this.time.addEvent({delay: 5000, callbackScope: this, loop: true });
+                ArrowReturn.elapsed=4500;
+                ArrowReturn.paused=true;
+                ENStimer.paused=true;
+                ENPtimer.paused=false;
+                EN2Stimer.paused=true;
+                EN2Ptimer.paused=false;
+                if(ArrowReturn.getProgress()>=0.9){
+                    pickArrow;
+                    ArrowReturn.elapsed=0;
+                    ArrowReturn.paused=true;
+                 }
+
+                //  if(ArrowReturn.paused==true){
+                //     this.physics.add.overlap(weaponHead,EN2,killEN(EN));
+                //     console.log('1');
+                // }
+                // if(ArrowReturn.paused==true){
+                //     killEN(EN2);
+                //     console.log('2');
+                // }
+
+                 //光照
+                motionLight_1 = this.add.image(0,0,'light').setOrigin(0,0).setBlendMode('ADD').setAlpha(0.8);
+                motionLight_1.scene.tweens.add(
+                {
+                    targets: motionLight_1,
+                    scaleX:1,
+                    scaleY:1,
+                    alpha:0.2,
+                    ease:'Linear',
+                    duration:3000,
+                    repeat:-1,
+                    yoyo:true
+                });
+
+                motionLight_2 = this.add.image(0,0,'light').setOrigin(0,0).setBlendMode('ADD').setAlpha(0.2);
+                motionLight_2.scene.tweens.add(
+                {
+                    targets: motionLight_2,
+                    scaleX:1,
+                    scaleY:1,
+                    alpha:0,
+                    ease:'Linear',
+                    duration:2500,
+                    repeat:-1,
+                    yoyo:true
+                });
+                //boss位移
+                bossX=this.tweens.add({
+                    targets: boss1,
+                    props: {
+                    x: { value: 700, duration: 2000, flipX: true },
+                    y: { value: 50, duration: 15000,  },
+                },
+                ease: 'Sine.easeInOut',
+                yoyo: true,
+                repeat: -1
+                });
+               
+        }// CREATE END
+
+        //=========================================FUNCTIONS========================================
+        
+        function lockText1_Open()
+        {
+            lockText1.scene.tweens.add(
+            {
+                targets: lockText1,
+                scaleX:1,
+                scaleY:1,
+                alpha:1,
+                ease:'Linear',
+                duration:300,
+                repeat:0,
+                yoyo:false
+            });
+        }
+
+        // function lockText1_Close()
+        // {
+        //     lockText1.scene.tweens.add(
+        //     {
+        //         targets: lockText1,
+        //         scaleX:0,
+        //         scaleY:0,
+        //         alpha:0,
+        //         ease:'Linear',
+        //         duration:300,
+        //         repeat:0,
+        //         yoyo:false
+        //     });
+        // }
+        
+        // function turText1_Close()
+        // {
+        //     turText1.scene.tweens.add(
+        //     {
+        //         targets: turText1,
+        //         scaleX:1,
+        //         scaleY:1,
+        //         alpha:0,
+        //         ease:'Linear',
+        //         duration:300,
+        //         repeat:0,
+        //         yoyo:false,
+        //     });
+        // }
+        
+        function GuraBreath()
+        {
+            san = 2000;
+            
+            
+            if(san>0 & Pl==0)
+            {
+                SharkBreath.play();
+                Pl=1;
+            } 
+        
+              
+        }
+        
+        
+        // function collectStar(player,star)
+        // {
+        //     pick = 1;
+        //     star.disableBody(true,true);
+        //     pickedStar+=1;
+        //     score +=10;
+        //     scoreText.setText('Score:'+score);
+        //     lockText1.setText('Kill Enemys\n'+'      '+pickedStar+'/24',{font:'24px Arial Black',backgroundColor:'rgba(0,0,0,0.4)',color:'white',fixedWidth:200});         
+        // }
+        
+
+        function AmeAnimation()
+        {
+           
+        }
+        //落下攻擊著地
+        function land(platforms, shots)
+        {
+            this.time.addEvent(
+                {
+                    delay:500,
+                    callback:()=>
+                    {
+                        tags.setVisible(false);
+                    },   
+                    loop:false
+                });
+
+                this.time.addEvent(
+                {
+                    delay:6000,
+                    callback:()=>
+                    {
+                        shots.destroy();
+                    },   
+                    loop:false
+                });
+        }
+
+        //追蹤飛彈著地
+        function explode(platforms, missiles)
+        {
+            missiles.destroy();
+            this.cameras.main.shake(200,0.005,false,null,null);
+            MissileExplode.play();
+            if(missile1.active == false && missile2.active == false && missile3.active == false && missile4.active == false &&missile5.active == false )
+            {
+                MissileHover.pause();
+            }
+
+            if(missile1.active == false && emitter_missile_1.active == true)
+                {
+                    //emitter_missile_1.setGravityY(80);
+                    emitter_missile_1.setSpeed(200);
+                    emitter_missile_1.setQuantity(8);
+                    emitter_missile_1.explode();
+                    
+                    
+                }
+
+                if(missile2.active == false && emitter_missile_2.active == true)
+                {
+                    //emitter_missile_2.setGravityY(80);
+                    emitter_missile_2.setSpeed(200);
+                    emitter_missile_2.setQuantity(8);
+                    emitter_missile_2.explode();
+                
+                    
+                }
+
+                if(missile3.active == false && emitter_missile_3.active == true)
+                {
+                    //emitter_missile_3.setGravityY(80);
+                    emitter_missile_3.setSpeed(200);
+                    emitter_missile_3.setQuantity(8);
+                    emitter_missile_3.explode();
+                    
+                    
+                }
+
+                if(missile4.active == false && emitter_missile_4.active == true)
+                {
+                    //emitter_missile_4.setGravityY(80);
+                    emitter_missile_4.setSpeed(200);
+                    emitter_missile_4.setQuantity(8);
+                    emitter_missile_4.explode();
+                    
+                    
+                }
+
+                if(missile5.active == false && emitter_missile_5.active == true)
+                {
+                    //emitter_missile_5.setGravityY(80);
+                    emitter_missile_5.setSpeed(200);
+                    emitter_missile_5.setQuantity(8);
+                    emitter_missile_5.explode();
+                    
+                    
+                }
+        }
+        
+        function unlockDoor(bomb)
+        {
+            //bombs.clear();
+            bombs.children.iterate(function(child)
+            {
+                child.disableBody(true,true);
+            });
+            unlocked+=0.01;
+        }
+        function hitFire(player,fire)
+        {
+                this.physics.pause();
+                player.setTint(0xff0000);
+                player.anims.play('turn');
+                gameOver = true;
+                SharkShout.play();  
+                ENStimer.paused=true;
+                EN2Stimer.paused=true;
+        }
+        
+        //玩家碰撞EN
+        function hitEN(player,en){
+            //console.log('hit');
+            
+
+            if(pYV>=700)
+            {
+                // en.disableBody(true,true);
+
+                // SharkBreath.pause();
+                // this.cameras.main.shake(300,0.005,false,null,null);
+                
+                // this.time.addEvent(
+                // {
+                //     loop:false,
+                //     delay:0,
+                //     callback:hurt,
+                //     callbackScope: this
+                // });
+                en.disableBody(true,true);
+                
+                en.exists=false;
+                //console.log('kill');
+                NENESound.pause();
+                
+                
+            }
+
+            if(pYV<700)
+            {
+                this.physics.pause();
+                player.setTint(0xff0000);
+                player.anims.play('turn');
+                gameOver = true;
+                SharkShout.play();  
+            }
+        }
+        //三叉戟擊殺EN
+        function killEN(en){
+                en.disableBody(true,true);
+                NENESound.pause();
+                en.exists=false;
+                //console.log('kill');
+            }
+        function BOSS()
+        {
+            //console.log('BOSS');   
+            //boss出現
+                boss1 = this.physics.add.sprite(800,50,'boss').setScale(0.6).refreshBody();
+                this.physics.add.collider(player,boss1,rebound,null,this);
+                this.physics.add.overlap(weaponHead,boss1,hurt,null,this);
+                bossX.play();
+                boss1.setBounce(0);
+                boss1.setCollideWorldBounds(true);
+                boss1.allowGravity = false;
+                boss1.body.gravity.y = -500;
+                boss1.setImmovable(true);
+                
+                //boss血槽
+                HpBarWhite  = this.add.image(308,460,'HpBarWhite').setOrigin(0,0).setAlpha(1).setScrollFactor(0);
+                HpBarRed    = this.add.image(308,460,'HpBarRed').setOrigin(0,0).setAlpha(1).setScrollFactor(0);
+                HpBarStroke = this.add.image(308,460,'HpBarStroke').setOrigin(0,0).setAlpha(1).setScrollFactor(0);
+                
+                lifeText = this.add.text(523,460,'150',{font:'24px Arial Black',color:'white',fixedWidth:200}).setScrollFactor(0);
+                //第一次標記5個位置並落下攻擊 (position1-5)
+                
+                
+                this.time.addEvent(
+                {
+                    loop:false,
+                    delay:1000,
+                    callback:position1,
+                    callbackScope: this
+                });
+
+                this.time.addEvent(
+                {
+                    loop:false,
+                    delay:2000,
+                    callback:position2,
+                    callbackScope: this
+                });
+
+                this.time.addEvent(
+                {
+                    loop:false,
+                    delay:3000,
+                    callback:position3,
+                    callbackScope: this
+                });
+
+                this.time.addEvent(
+                {
+                    loop:false,
+                    delay:4000,
+                    callback:position4,
+                    callbackScope: this
+                });
+
+                this.time.addEvent(
+                {
+                    loop:false,
+                    delay:5000,
+                    callback:position5,
+                    callbackScope: this
+                });
+
+                //跑CD + 標記5個位置並落下攻擊 (position1-5)
+                this.time.addEvent(
+                {
+                    delay:16000,
+                    callback:()=>
+                    {
+                        this.time.addEvent(
+                    {
+                        loop:false,
+                        delay:1000,
+                        callback:position1,
+                        callbackScope: this
+                    });
+
+                    this.time.addEvent(
+                    {
+                        loop:false,
+                        delay:2000,
+                        callback:position2,
+                        callbackScope: this
+                    });
+
+                    this.time.addEvent(
+                    {
+                        loop:false,
+                        delay:3000,
+                        callback:position3,
+                        callbackScope: this
+                    });
+
+                    this.time.addEvent(
+                    {
+                        loop:false,
+                        delay:4000,
+                        callback:position4,
+                        callbackScope: this
+                    });
+
+                    this.time.addEvent(
+                    {
+                        loop:false,
+                        delay:5000,
+                        callback:position5,
+                        callbackScope: this
+                    });
+                        },   
+                    loop:true
+                });
+
+                //商店關閉
+                if(jumper.active == true)
+                {
+                    jumper.disableBody(true,true);
+                }
+                if(sanser.active == true)
+                {
+                    sanser.disableBody(true,true);
+                }
+                if(arrower.active == true)
+                {
+                    arrower.disableBody(true,true);
+                }
+                
+                //boss血條
+                lifeText.setVisible(true);
+                
+                BackgroundMusic.pause();
+                PekoraBGM.play();
+                
+                PekoraShowUp.play();
+
+                this.cameras.main.pan(800,50,2000,'Power2');
+
+                showboss=true;
+        }
+        
+        
+
+            //落下攻擊碰撞 + boss受傷害
+        function hitShot(player,shots)
+        {
+
+            if(pYV<700)
+            {
+                this.physics.pause();
+                player.setTint(0xff0000);
+                player.anims.play('turn');
+                gameOver = true;
+                SharkShout.play();
+                PekoraWin.play();
+                PekoraSkill.pause()
+                this.cameras.main.shake(200,0.005,false,null,null);
+                MissileExplode.play();  
+            }
+
+            if(pYV>=700)
+            {
+                shots.disableBody(true,true);
+
+                SharkBreath.pause();
+                this.cameras.main.shake(300,0.005,false,null,null);
+                
+                // this.time.addEvent(
+                // {
+                //     loop:false,
+                //     delay:0,
+                //     callback:hurt,
+                //     callbackScope: this
+                // });
+            }
+            
+        }
+
+        //追蹤飛彈碰撞
+        function hitMissile(player,missiles)
+        {
+                missiles.destroy();
+                this.physics.pause();
+                player.setTint(0xff0000);
+                player.anims.play('turn');
+                gameOver = true;
+                SharkShout.play();
+                PekoraWin.play();
+                PekoraSkill.pause();
+                this.cameras.main.shake(200,0.005,false,null,null);
+                MissileExplode.play();
+                
+                if(missile1.active == false && emitter_missile_1.active == true)
+                {
+                    //emitter_missile_1.setGravityY(80);
+                    emitter_missile_1.setSpeed(200);
+                    emitter_missile_1.setQuantity(8);
+                    emitter_missile_1.explode();
+                    
+                    
+                }
+
+                if(missile2.active == false && emitter_missile_2.active == true)
+                {
+                    //emitter_missile_2.setGravityY(80);
+                    emitter_missile_2.setSpeed(200);
+                    emitter_missile_2.setQuantity(8);
+                    emitter_missile_2.explode();
+                
+                    
+                }
+
+                if(missile3.active == false && emitter_missile_3.active == true)
+                {
+                    //emitter_missile_3.setGravityY(80);
+                    emitter_missile_3.setSpeed(200);
+                    emitter_missile_3.setQuantity(8);
+                    emitter_missile_3.explode();
+                    
+                    
+                }
+
+                if(missile4.active == false && emitter_missile_4.active == true)
+                {
+                    //emitter_missile_4.setGravityY(80);
+                    emitter_missile_4.setSpeed(200);
+                    emitter_missile_4.setQuantity(8);
+                    emitter_missile_4.explode();
+                    
+                    
+                }
+
+                if(missile5.active == false && emitter_missile_5.active == true)
+                {
+                    //emitter_missile_5.setGravityY(80);
+                    emitter_missile_5.setSpeed(200);
+                    emitter_missile_5.setQuantity(8);
+                    emitter_missile_5.explode();
+                    
+                    
+                }
+                
+                emitter_missile_1.stop();
+                emitter_missile_2.stop();
+                emitter_missile_3.stop();
+                emitter_missile_4.stop();
+                emitter_missile_5.stop();
+                
+        }
+
+        //boss碰撞
+        // function hitBoss(player,boss1)
+        // {
+
+        //         this.physics.pause();
+        //         player.setTint(0xff0000);
+        //         player.anims.play('turn');
+        //         gameOver = true;
+        //         SharkShout.play();
+            
+        // }
+
+        //boss受傷害
+        function hurt()
+        {
+            if(damaged == false)
+            {
+                PekoraHit.play();
+                boss1.setTint(0xff0000);
+                life_b -= 10;
+                lifeText.setText(life_b);
+            
+                bossAnimSitu = 1;
+                bossAnimCoverAcess = 1;
+                
+                damaged = true;
+                
+                HpBarRed.setScale(hpPercentage,1);
+                HpBarWhite.scene.tweens.add(
+                {
+                targets: HpBarWhite,
+                scaleX:hpPercentage,
+                ease:'Linear',
+                duration:1000,
+                repeat:0,
+                yoyo:false
+                });
+                
+                bossDeadDetect();
+                Trophy.call(this);
+            }
+        }
+        //_____________________Boss死亡偵測與處理_______________________________________
+        function bossDeadDetect(missile1,missile2,missile3,missile4,missile5,shot1,shot2,shot3,shot4,shot5)
+        {
+            if(life_b<=0)
+            {
+                boss1.setTint(0xff0000);
+                if(player.x<boss1.x)
+                {
+                    boss1.anims.play('BossLeftHit');
+                }
+                if(player.x>=boss1.x)
+                {
+                    boss1.anims.play('BossRightHit');
+                }
+                
+                //boss1.disableBody(true,true);
+                shots.children.iterate(function(child)
+                {
+                    child.disableBody(true,true);
+                });
+
+                emitter_missile_1.stop();
+                emitter_missile_2.stop();
+                emitter_missile_3.stop();
+                emitter_missile_4.stop();
+                emitter_missile_5.stop();
+                
+                missiles.children.iterate(function(child)
+                {
+                    child.disableBody(true,true);
+                });
+                
+                
+                MissileHover.pause();
+                PekoraLose.play();
+                PekoraBGM.setVolume(0.1);
+                bossDead = true;
+                //missiles.destroy();
+                //shots.destroy();
+
+            }
+        }
+        function Trophy(){
+            if(bossDead){
+                this.time.addEvent(
+                {
+                    loop:false,
+                    delay:3000,
+                    callback:function(){
+                        boss1.disableBody(true,true);
+                        HpBarRed.setVisible(false);
+                        HpBarStroke.setVisible(false);
+                        HpBarWhite.setVisible(false);
+                        lifeText.setVisible(false);
+                    },
+                    callbackScope: this
+                });
+                cap.body.setAllowGravity(true);
+                cap.x=boss1.x;
+                cap.y=boss1.y-100;
+                if(cap.y<=10){
+                    cap.y=15;
+                }
+                cap.setVisible(true);
+                cap.body.gravity.y=-450;
+                console.log(cap.x);
+                this.physics.add.collider(platforms,cap)
+                this.physics.add.overlap(player,cap,function(){
+                    capText.x=player.x;
+                    capText.y=player.y-100;
+                    capText.setVisible(true);
+                    if(E.isDown && player.x<cap.x+50 && player.x>cap.x-50 && player.y<cap.y+50 && player.y>cap.y-50 )
+                        {window.close('Gura_spear.html');
+                        window.open('index.html');}
+                    },null,this);
+                }
+        }
+        //BOSS擊飛
+        function rebound(){
+            if(player.x>boss1.x && bossDead == false){
+                tempVX=500;
+                player.setVelocityX(500);
+                player.setVelocityY(-150);
+                this.cameras.main.shake(200,0.005,false,null,null);
+                PekoraSlap.play();
+                Aa.play();
+
+            }
+            if(player.x<boss1.x && bossDead == false){
+                tempVX=-500;
+                player.setVelocityX(-500);
+                player.setVelocityY(-150);
+                this.cameras.main.shake(200,0.005,false,null,null);
+                PekoraSlap.play();
+                Aa.play();
+            }
+
+            
+            bossAnimSitu = 2;
+            bossAnimCoverAcess = 1;
+            // PekoraSlap.play();
+            // Aa.play();
+
+        }
+
+        //標記一 + 落下攻擊一 + 追蹤飛彈發射
+        function position1()
+        {
+            if(bossDead == false)
+            {
+                let tx = player.x;
+                let ty = player.y;
+                let Tag = tags.create(tx,ty,'tag');
+                  
+                Tag.setBounce(0);
+                Tag.setCollideWorldBounds(true);
+                Tag.setBlendMode('ADD').setScale(1.5);
+                Tag.allowGravity = false;
+                Tag.body.gravity.y = -500;
+
+                MissileLockOn.play();
+
+                
+                att=this.time.addEvent(
+                    {
+                        delay:6000,
+                        callback:()=>
+                        {
+                            shot1 = shots.create(tx,15,'shot');
+                            shot1.setBounce(0);
+                            shot1.setCollideWorldBounds(true);
+                            shot1.allowGravity = false;
+                            
+                            particle = this.add.particles('PekoraEmitter');
+                            
+                            
+                            missile1 = missiles.create(boss1.x+50,boss1.y+50,'missile');
+                            missile1.setBounce(1);
+                            missile1.setCollideWorldBounds(true);
+                            missile1.setVelocity(Phaser.Math.Between(-200,200),20);
+                            missile1.allowGravity = true;
+                            emitter_missile_1 = particle.createEmitter(
+                                {
+                                    alpha:{start:1,end:0},
+                                    scale:{start:0.5,end:0},
+                                    speed:30,
+                                    gravityY:0,
+                                    bounce:1,
+                                    lifespan:2000,
+                                    quantity:8,
+                                    frequency:150,
+                                    blendMode:'SCREEN'
+                                });
+                            emitter_missile_1.startFollow(missile1);
+                            
+
+                            missile2  = missiles.create(boss1.x+50,boss1.y-50,'missile');
+                            missile2.setBounce(1);
+                            missile2.setCollideWorldBounds(true);
+                            missile2.setVelocity(Phaser.Math.Between(-200,200),20);
+                            missile2.allowGravity = true;
+                            emitter_missile_2 = particle.createEmitter(
+                                {
+                                    alpha:{start:1,end:0},
+                                    scale:{start:0.5,end:0},
+                                    speed:30,
+                                    gravityY:0,
+                                    bounce:1,
+                                    lifespan:2000,
+                                    quantity:8,
+                                    frequency:150,
+                                    blendMode:'SCREEN'
+                                });
+                            emitter_missile_2.startFollow(missile2);
+
+                            missile3 = missiles.create(boss1.x-50,boss1.y-50,'missile');
+                            missile3.setBounce(1);
+                            missile3.setCollideWorldBounds(true);
+                            missile3.setVelocity(Phaser.Math.Between(-200,200),20);
+                            missile3.allowGravity = true;
+                            emitter_missile_3 = particle.createEmitter(
+                                {
+                                    alpha:{start:1,end:0},
+                                    scale:{start:0.5,end:0},
+                                    speed:30,
+                                    gravityY:0,
+                                    bounce:1,
+                                    lifespan:2000,
+                                    quantity:8,
+                                    frequency:150,
+                                    blendMode:'SCREEN'
+                                });
+                            emitter_missile_3.startFollow(missile3);
+
+                            missile4 = missiles.create(boss1.x-50,boss1.y+50,'missile');
+                            missile4.setBounce(1);
+                            missile4.setCollideWorldBounds(true);
+                            missile4.setVelocity(Phaser.Math.Between(-200,200),20);
+                            missile4.allowGravity = true;
+                            emitter_missile_4 = particle.createEmitter(
+                                {
+                                    alpha:{start:1,end:0},
+                                    scale:{start:0.5,end:0},
+                                    speed:30,
+                                    gravityY:0,
+                                    bounce:1,
+                                    lifespan:2000,
+                                    quantity:8,
+                                    frequency:150,
+                                    blendMode:'SCREEN'
+                                });
+                            emitter_missile_4.startFollow(missile4);
+
+                            missile5 = missiles.create(boss1.x,boss1.y,'missile');
+                            missile5.setBounce(1);
+                            missile5.setCollideWorldBounds(true);
+                            missile5.setVelocity(Phaser.Math.Between(-200,200),20);
+                            missile5.allowGravity = true;
+                            emitter_missile_5 = particle.createEmitter(
+                                {
+                                    alpha:{start:1,end:0},
+                                    scale:{start:0.5,end:0},
+                                    speed:30,
+                                    gravityY:0,
+                                    bounce:1,
+                                    lifespan:2000,
+                                    quantity:8,
+                                    frequency:150,
+                                    blendMode:'SCREEN'
+                                });
+                            emitter_missile_5.startFollow(missile5);
+
+                            PekoraSkill.play();
+                            MissileLaunch.play();
+                            MissileHover.play();
+                            bossAnimSitu = 2;
+                            bossAnimCoverAcess = 1;
+                        
+                        },   
+                        loop:false
+                    });
+            }
+            
+        }
+
+        //標記二 +　落下攻擊二
+        function position2()
+        {
+            if(bossDead == false)
+            {
+                let tx = player.x;
+                let ty = player.y;
+                let Tag = tags.create(tx,ty,'tag');
+                            Tag.setBounce(0);
+                            Tag.setCollideWorldBounds(true);
+                            Tag.setBlendMode('ADD').setScale(1.5);
+                            Tag.allowGravity = false;
+                            Tag.body.gravity.y = -500;
+                            MissileLockOn.play();
+                
+                att2=this.time.addEvent(
+                    {
+                        delay:5000,
+                        callback:()=>
+                        {
+                            shot2 = shots.create(tx,15,'shot');
+                            shot2.setBounce(0);
+                            shot2.setCollideWorldBounds(true);
+                            shot2.allowGravity = false;
+                        },   
+                        loop:false
+                    });            
+            }
+            
+        }
+
+        //標記三　＋　落下攻擊三
+        function position3()
+        {
+            if(bossDead == false)
+            {
+                let tx = player.x;
+                let ty = player.y;
+                let Tag = tags.create(tx,ty,'tag');
+                            Tag.setBounce(0);
+                            Tag.setCollideWorldBounds(true);
+                            Tag.setBlendMode('ADD').setScale(1.5);
+                            Tag.allowGravity = false;
+                            Tag.body.gravity.y = -500;
+                            MissileLockOn.play();
+                
+                att3=this.time.addEvent(
+                    {
+                        delay:4000,
+                        callback:()=>
+                        {
+                            shot3 = shots.create(tx,15,'shot');
+                            shot3.setBounce(0);
+                            shot3.setCollideWorldBounds(true);
+                            shot3.allowGravity = false;
+                        },   
+                        loop:false
+                    });     
+            }
+            
+        }
+
+        //標記四　＋　落下攻擊四
+        function position4()
+        {
+            if(bossDead == false)
+            {
+                let tx = player.x;
+                let ty = player.y;
+                let Tag = tags.create(tx,ty,'tag');
+                            Tag.setBounce(0);
+                            Tag.setCollideWorldBounds(true);
+                            Tag.setBlendMode('ADD').setScale(1.5);
+                            Tag.allowGravity = false;
+                            Tag.body.gravity.y = -500;
+                            MissileLockOn.play();
+                
+                att4=this.time.addEvent(
+                    {
+                        delay:3000,
+                        callback:()=>
+                        {
+                            shot4 = shots.create(tx,15,'shot');
+                            shot4.setBounce(0);
+                            shot4.setCollideWorldBounds(true);
+                            shot4.allowGravity = false;
+                        },   
+                        loop:false
+                    });
+                 //BOSS 出現玩家頭上附近
+                 if(player.x<50){
+                        boss1.x=130;
+                    }else if(player.x>1450){
+                        boss1.x=1370;
+                    }else{
+                        if(player.x<750){
+                            boss1.x=player.x+100;
+                        }else{
+                            boss1.x=player.x-100;
+                        }
+                    }
+                    boss1.y=player.y-200;  
+            }
+            
+        }
+
+        //標記五　＋　落下攻擊五
+        function position5()
+        {
+            if(bossDead == false)
+            {
+                let tx = player.x;
+                let ty = player.y;
+                let Tag = tags.create(tx,ty,'tag');
+                            Tag.setBounce(0);
+                            Tag.setCollideWorldBounds(true);
+                            Tag.setBlendMode('ADD').setScale(1.5);
+                            Tag.allowGravity = false;
+                            Tag.body.gravity.y = -500;
+                            MissileLockOn.play();
+                
+                att5=this.time.addEvent(
+                    {
+                        delay:2000,
+                        callback:()=>
+                        {
+                            shot5 = shots.create(tx,15,'shot');
+                            shot5.setBounce(0);
+                            shot5.setCollideWorldBounds(true);
+                            shot5.allowGravity = false;
+                        },   
+                        loop:false
+                    });    
+            }
+            
+        }
+        //===============測試FUNCTION================
+        //Test func
+        function playerTouchPlat(player,platforms)
+        {
+            pTouchPlat = 1;
+        }
+        
+        
+        //敵人巡邏
+        function patrol(en,timer){
+            if(timer.paused!=true){
+                en.clearTint();
+                if(timer.getProgress()<0.2){
+                    en.setVelocityX(0);
+
+                    en.anims.play('NENERightStandby');
+                    }
+                if(timer.getProgress()>=0.2 && timer.getProgress()<0.5){
+                    
+                    en.setVelocityX(-150);
+                    
+                    en.anims.play('NENELeftWalk',true); 
+                    
+                     
+                }
+                if(timer.getProgress()>=0.5 && timer.getProgress()<0.7){
+                    en.setVelocityX(0);
+                    en.anims.play('NENELeftStandby');
+                }
+                if(timer.getProgress()>=0.7){
+                    en.setVelocityX(150);
+                    en.anims.play('NENERightWalk',true);
+                }
+            }
+        }
+            //敵人衝刺
+        function Sprint(player,ens,en,Stimer,Ptimer){
+            Stimer.paused = false;
+            if(Stimer.paused!=true){
+                if(Stimer.getProgress()<0.2){
+                    if(player.x>en.x){
+                        d=1;
+                    }else{
+                        d=-1;
+                    } 
+                    //en.setTint(0xff0000);
+                    en.setVelocityX(0);
+                    en.anims.play('NENERightAlert');
+                    if(en.active == true)
+                    {
+                        NENESound.play();
+                    }
+                    
+                }
+                if(Stimer.getProgress()>=0.2 && Stimer.getProgress()<0.7){
+                    if(d==1){ 
+                        Ptimer.elapsed =0;
+                    }else{
+                        Ptimer.elapsed = 5500;
+                    }
+                    //en.setTint(0x00f0ff);
+                    en.setVelocityX(400*d);
+                    if(d>0)
+                    {
+                        en.anims.play('NENERightRun',true);
+                        
+                    }
+                    if(d<=0)
+                    {
+                        en.anims.play('NENELeftRun',true);
+                        
+                    }
+                   
+                    
+                }
+                if(Stimer.getProgress()>=0.7){
+                    en.setVelocityX(50*d);
+                    //en.setTint(0x0000ff);
+                    if(d>0)
+                    {
+                        en.anims.play('NENERightRun',true);
+                        
+                    }
+                    if(d<=0)
+                    {
+                        en.anims.play('NENELeftRun',true);
+                        
+                    }
+                }
+                if(Stimer.getProgress()>=1){
+                    Stimer.paused=true;
+                    Stimer.elapsed =0;
+                }
+            }
+        }
+
+            //撿到三叉戟
+            function pickArrow(){
+                ArrowReturn.paused=true;
+                ArrowReturn.elapsed=0;
+                if(CD.getProgress()>0.5){
+                    CD.elapsed=0;
+                    CD.paused=true;
+                    arrow.exists=true;
+                    weaponHead.exists=false;
+                    weaponHead.disableBody(true,true);
+                    weapon.exists=false;
+                    weapon.disableBody(true,true);
+                    arrow.setVisible(true);
+                    aim.setVisible(true);
+                    pick = 1;
+
+                    spear_situation = 0;
+
+                    damaged = false;
+                }
+            }
+            
+            //投擲三叉戟
+            function launch(){
+                if(arrow.exists==true){
+                    CD.paused=false;
+                    arrow.exists=false;
+                    arrow.setVisible(false);
+                    if (weapon.exists){return;}
+                    weaponHead.enableBody().setVisible(true);
+                    weaponHead.exists=true;
+                    weaponHead.body.reset(player.x,player.y);
+                    weapon.setVisible(true);
+                    weapon.exists=true;
+                    weapon.setRotation(angle);
+                    point=new Phaser.Geom.Point(player.x,player.y);
+                    Phaser.Math.RotateAroundDistance(point,point.x,point.y,angle,32);
+                    this.physics.velocityFromRotation(angle,500*a,weaponHead.body.velocity);
+                    Throw.play();
+                    ThorwSpear.play();
+                    pick = 1;
+
+                    spear_situation = 1;
+                    weapon.x = -100;
+                    weapon.y = -100;
+                }
+            }
+            //三叉戟插牆
+            function drop(){
+                SpearStick.play();
+                weaponHead.setVelocity(0);
+                weapon.setVelocity(0);
+                CD.elapsed=4000;
+                CD.paused=true;
+                ArrowReturn.paused=false;
+                spear_situation = 0;
+
+                pick = 1;
+            }
+            //JUMPER
+            function jump(){
+                pick = 1;
+                Etext.setVisible(true);
+                Etext.x=jumper.x;
+                Etext.y=jumper.y-130;
+                shopText.setVisible(true).setText('Gura can triple jump\nwith her new shoes\n              $200');
+                if(E.isDown && score>= 200)
+                {
+                    Cash.play();
+                    jumper.disableBody(true,true);
+                    j=1;
+                    additionalJump = 2;
+                    score-=200;
+                    scoreText.setText('Score:'+score);
+                }
+                if(E.isDown && score<200 && jumper.active == true)
+                {
+                    SwitchWrong.play();
+                    scoreText.setTint(0xff0000);
+                    this.time.addEvent(
+                    {
+                        loop:false,
+                        delay:400,
+                        callback:function()
+                        {
+                            scoreText.setTint(0xffffff);    
+                        },
+                        callbackScope: this
+                    });
+                }
+                
+            }
+            function shot(){
+                pick = 1;
+                Etext.setVisible(true);
+                Etext.x=arrower.x;
+                Etext.y=arrower.y-130;
+                shopText.setVisible(true).setText('           Trident\n       +80% speed \n    -40% auto pick CD\n              $300');
+                if(E.isDown && score>= 300)
+                {
+                    Cash.play();
+                    arrower.destroy();
+                    a=1.8;
+                    ArrowReturn.delay*=0.6;
+                    score-=300;
+                    scoreText.setText('Score:'+score);
+                }
+                if(E.isDown && score<300 && arrower.active == true)
+                {
+                    SwitchWrong.play();
+                    scoreText.setTint(0xff0000);
+                    this.time.addEvent(
+                    {
+                        loop:false,
+                        delay:400,
+                        callback:function()
+                        {
+                            scoreText.setTint(0xffffff);    
+                        },
+                        callbackScope: this
+                    });
+                }
+                
+            }
+            function sans(){
+                pick = 1;
+                Etext.setVisible(true);
+                Etext.x=sanser.x;
+                Etext.y=sanser.y-130;
+                shopText.setVisible(true).setText('     Gura in danger!\n    move speed+25%\n              $100');
+                if(E.isDown && score>= 100)
+                {
+                    Cash.play();
+                    sanser.disableBody(true,true);
+                    sanser.exists=false;
+                    score-=100;
+                    scoreText.setText('Score:'+score);
+                }
+                if(E.isDown && score<100 && sanser.active == true)
+                {
+                    SwitchWrong.play();
+                    scoreText.setTint(0xff0000);
+                    this.time.addEvent(
+                    {
+                        loop:false,
+                        delay:400,
+                        callback:function()
+                        {
+                            scoreText.setTint(0xffffff);    
+                        },
+                        callbackScope: this
+                    });
+                }
+            }
+            //破壞BOSS物件
+            function hitDestroy(weaponHead,sth){
+                sth.destroy();
+                MissileExplode.play();
+                if(missile1.active == false && missile2.active == false && missile3.active == false && missile4.active == false &&missile5.active == false )
+                {
+                    MissileHover.pause();
+                }
+                if(missile1.active == false && emitter_missile_1.active == true)
+                {
+                    //emitter_missile_1.setGravityY(80);
+                    emitter_missile_1.setSpeed(200);
+                    emitter_missile_1.setQuantity(8);
+                    emitter_missile_1.explode();
+                    
+                    
+                }
+
+                if(missile2.active == false && emitter_missile_2.active == true)
+                {
+                    //emitter_missile_2.setGravityY(80);
+                    emitter_missile_2.setSpeed(200);
+                    emitter_missile_2.setQuantity(8);
+                    emitter_missile_2.explode();
+                
+                    
+                }
+
+                if(missile3.active == false && emitter_missile_3.active == true)
+                {
+                    //emitter_missile_3.setGravityY(80);
+                    emitter_missile_3.setSpeed(200);
+                    emitter_missile_3.setQuantity(8);
+                    emitter_missile_3.explode();
+                    
+                    
+                }
+
+                if(missile4.active == false && emitter_missile_4.active == true)
+                {
+                    //emitter_missile_4.setGravityY(80);
+                    emitter_missile_4.setSpeed(200);
+                    emitter_missile_4.setQuantity(8);
+                    emitter_missile_4.explode();
+                    
+                    
+                }
+
+                if(missile5.active == false && emitter_missile_5.active == true)
+                {
+                    //emitter_missile_5.setGravityY(80);
+                    emitter_missile_5.setSpeed(200);
+                    emitter_missile_5.setQuantity(8);
+                    emitter_missile_5.explode();
+                    
+                    
+                }
+                bosshert.call(this);
+            }
+            function bosshert(){
+                console.log();
+                //hurt();
+            }
+        //=========================================UPDATES========================================
+
+        function update()
+        {
+            
+            hpPercentage = (life_b-10)/150;
+            
+            //console.log(pTouchPlat);
+            //_____________________Test Shop________________
+            if(player.x>240||player.x<70||player.y>220||player.y<190)
+            {
+                shopText.setVisible(false);
+                Etext.setVisible(false);
+            }
+            if(player.x>cap.x+50 || player.x<cap.x-50 && player.y>cap.y+50 || player.y<cap.y-50){
+                capText.setVisible(false);
+            }
+            
+            //____________________________Boss animation__________________________
+           
+            
+            
+            if(showboss == true && bossDead == false)
+            {
+                if(bossAnimationTimer<1.2)
+                {
+                    bossAnimationTimer += 0.01;
+                }
+                
+                if(onBossLeft == true && onBossRight == true)
+                {
+                    bossAnimCoverAcess = 0;
+                    onBossLeft  = false;
+                    onBossRight = false;
+                }
+
+                
+                if(player.x <= boss1.x )
+                {
+                    if(bossAnimSitu == 1 && bossAnimCoverAcess == 1)
+                    {
+                        boss1.setTint(0xff0000);
+                        bossAnimationTimer = 0;
+                        boss1.anims.play('BossLeftHit');
+                        bossAnimCoverAcess = 0;
+                    }
+                    if(bossAnimSitu == 2 && bossAnimCoverAcess == 1)
+                    {
+                        bossAnimationTimer = 0;
+                        boss1.anims.play('BossLeftSkill');
+                        bossAnimCoverAcess = 0;
+                    }
+                    if(bossAnimCoverAcess == 0 && bossAnimationTimer > 0.5)
+                    {
+                        boss1.setTint(0xffffff);
+                        boss1.anims.play('BossLeftStandby');
+                        bossAnimCoverAcess = 2;
+                    }
+
+                    onBossLeft =true;
+                }
+
+                if(player.x >  boss1.x )
+                {
+                    if(bossAnimSitu == 1 && bossAnimCoverAcess == 1)
+                    {
+                        boss1.setTint(0xff0000);
+                        bossAnimationTimer = 0;
+                        boss1.anims.play('BossRightHit');
+                        bossAnimCoverAcess = 0;
+                    }
+                    if(bossAnimSitu == 2 && bossAnimCoverAcess == 1)
+                    {
+                        bossAnimationTimer = 0;
+                        boss1.anims.play('BossRightSkill');
+                        bossAnimCoverAcess = 0;
+                    }
+                    if(bossAnimCoverAcess == 0 && bossAnimationTimer > 0.5)
+                    {
+                        boss1.setTint(0xffffff);
+                        boss1.anims.play('BossRightStandby');
+                        bossAnimCoverAcess = 2;
+                    }
+
+                    onBossRight = true;
+
+                }
+
+                
+            }
+            
+            
+            
+            
+            
+            //_________________TEST Temp VX adjust_________________________
+            if(A.isDown )
+            {
+                tempVX-=1.5;
+                
+            }
+
+            if(D.isDown)
+            {
+                tempVX+=1.5;
+            }
+            //______________Spear Effect Follow_______________
+            if(spear_situation == 1)
+            {
+                
+                player_spear.x = weapon.x;
+                player_spear.y = weapon.y; 
+            }
+
+            if(spear_situation == 0)
+            {
+                player_spear.x = -100;
+                player_spear.y = -100; 
+            }
+            
+            //______________Wall Jump Debug_________________
+            if(pTouchPlat == 1)
+            {
+                pick = 0;
+            }
+            
+            
+            //_____________Fire Volume____________________
+            if(player.x>620 && player.y>300)
+            {
+                Fire.setVolume(0.4);
+            }
+
+            if(player.x<=620 || player.y<=300)
+            {
+                Fire.setVolume(0.2);
+            }
+
+            if(player.x<400)
+            {
+                Fire.setVolume(0.1);
+            }
+            
+            
+            //_________________Load cookie__________________________
+            if(firstLoad == 0)
+            {
+                score = document.cookie;
+
+                scoreText.setText('Score:'+score);
+                firstLoad = 1;
+            }
+            
+            
+
+
+            //unlock_1
+            if(pickedStar>=24)
+            {
+                  
+            }
+
+            if(unlocked >= 1)
+            {
+                this.cameras.main.startFollow(player);
+            }
+
+            //更新玩家XY值(在60幀下)
+            
+            pY1 = player.y;
+            pX1 = player.x;
+            pYV = (pY1-pY2)/0.017;
+            pXV = (pX1-pX2)/0.017;
+            
+            
+            //console.log(player.body.velocity.x+', '+pXV);
+
+            //玩家周遭判定跟隨
+            playerSuround.setVelocityX(player.body.velocity.x);
+            playerSuround.setVelocityY(player.body.velocity.y);
+            playerSuround.x = player.x;
+            playerSuround.y = player.y; 
+            
+            
+            //玩家周遭san值
+            if(san>0)
+            {
+                san-=20;
+            }
+
+            if(san<=150)
+            {
+                s=1;
+                SharkBreath.pause();
+                Pl = 0;
+            }
+
+            //console.log(playerSuround.y,player.y);
+            
+            
+
+            if(gameOver == true)
+            {
+                
+                BackgroundMusic.pause();
+                PekoraBGM.pause();
+                Fire.pause(); 
+            }
+
+            //暫存水平速度與滑動
+            if(tempVX>=60 || tempVX<=-60)
+            {
+                easingVX = (0-tempVX)/120;
+                tempVX+=easingVX;
+            }
+            
+            if(tempVX<60 && tempVX>=-60)
+            {
+                easingVX = (0-tempVX)/12;
+                tempVX+=easingVX;
+            }
+
+            if(( A.isUp)  && player.body.touching.down )
+            {
+                easingVX = (0-tempVX)/10;
+                tempVX+=easingVX;
+            }
+
+            
+            
+            //人物左右移動，地面
+
+            if(( A.isDown) && pTouchPlat == 1 && player.body.touching.down)
+            {
+                player.setVelocityX(-200*s);
+                player.anims.play('left',true);
+                tempVX = -200*s;
+                playerF.x = player.x;
+                playerF.y = player.y+25;
+                //SharkSteps.pause();
+            }
+            else if(( D.isDown) && pTouchPlat == 1 && player.body.touching.down)
+            {
+                player.setVelocityX(200*s);
+                player.anims.play('right',true);
+                tempVX = 200*s;
+                playerF.x = player.x;
+                playerF.y = player.y+25;
+                //SharkSteps.pause();
+            }
+            
+            //人物水平速度設定，離地
+            else 
+            {
+                player.setVelocityX(tempVX*s);
+                player.anims.play('turn',true);
+                playerF.x = -100;
+                playerF.y = -100;
+                playerS.x = -100;
+                playerS.y = -100;
+
+                SharkSteps.play();
+            }
+            
+            //人物地面彈跳
+            if(( W.isDown )&& pTouchPlat == 1 && player.body.touching.down && pick == 0)
+            {
+                player.setVelocityY(-400*j);
+                SharkJump.play();
+            }
+           
+            //人物牆面彈跳
+            if(( W.isDown) && player.body.touching.left  && pick == 0 && pTouchPlat == 1)
+            {
+                player.setVelocityY(-200*j);
+                player.setVelocityX(140*s);
+                tempVX = 140*s;
+
+                playerF.x = player.x;
+                playerF.y = player.y+25;
+
+                SharkJump.play();
+
+                firstWallJump = 1;
+            }
+            if(( W.isDown) && player.body.touching.right  && pick == 0 && pTouchPlat == 1)
+            {
+                player.setVelocityY(-200*j);
+                player.setVelocityX(-140*s);
+                tempVX = -140*s;
+
+                playerF.x = player.x;
+                playerF.y = player.y+25;
+
+                SharkJump.play();
+
+                firstWallJump = 1;
+
+            }
+
+            //doubleJump
+            if(player.body.touching.none)
+            {
+                pick = 0;
+                pTouchPlat = 0;
+            }
+            // if(playerTouchPlat != true)
+            // {
+            //     pTouchPlat = 0;
+            // }
+            
+            if((player.body.touching.down || player.body.touching.left || player.body.touching.right)&& pTouchPlat == 1)
+            {
+                doubleJump2 = 1;
+                addJump = additionalJump;
+            }
+            
+            if(( W.isUp) && player.body.touching.none && doubleJump2 == 1)
+            {
+                
+                doubleJump2 = 2;
+            }
+
+            if(( W.isDown) && ( D.isUp) && ( A.isUp) && player.body.touching.none && doubleJump2 == 2 && pick == 0 && addJump>0)
+            {
+                player.setVelocityY(-300*j);
+                
+                addJump-=1;
+                doubleJump2 = 1
+                
+                playerF.x = player.x;
+                playerF.y = player.y+25;
+
+                SharkJump.play();
+
+                firstDoubleJump = 1;
+            }
+
+            if(( W.isDown) && ( D.isDown) && player.body.touching.none && doubleJump2 == 2 && pick == 0 && addJump>0)
+            {
+                player.setVelocityX(200*s);
+                tempVX = 200*s;
+                player.setVelocityY(-300*j);
+                
+                addJump-=1;
+                doubleJump2 = 1;
+
+                playerF.x = player.x;
+                playerF.y = player.y+25;
+
+                SharkJump.play();
+
+                firstDoubleJump = 1;
+            }
+
+            if(( W.isDown) && ( A.isDown) && player.body.touching.none && doubleJump2 == 2 && pick == 0  && addJump>0)
+            {
+                player.setVelocityX(-200*s);
+                tempVX = -200*s;
+                player.setVelocityY(-300*j);
+                
+                addJump-=1;
+                doubleJump2 = 1;
+
+                playerF.x = player.x;
+                playerF.y = player.y+25;
+
+                SharkJump.play();
+
+                firstDoubleJump = 1;
+            }
+
+            //Ground Pound
+            if(S.isDown  )
+            {
+                player.setVelocityY(800);
+            }
+            
+            //人物跳躍動畫設定
+            if(pXV>2 && pYV<700 && player.body.touching.none)
+            {
+                player.anims.play('JumpRight',true);
+            }
+
+            if(pXV<-2 && pYV<700 && player.body.touching.none)
+            {
+                player.anims.play('JumpLeft',true);
+            }
+            
+            //Ground Pound Animation
+            if(pYV>=700)
+            {
+                player.anims.play('down');
+                playerS.x = player.x;
+                playerS.y = player.y+40;
+                Aa.play();
+            }
+
+            if(pYV<700)
+            {
+                playerS.x = -300;
+                playerS.y = -300;
+            }
+
+            //Ground Pound Shaking
+            if(player.body.velocity.y >=700 && pYV>=700)
+            {
+                pound = 1;
+            }
+
+            if(pound == 1 && player.body.touching.down)
+            {
+                this.cameras.main.shake(300,0.005,false,null,null);
+                pound = 0;
+            }
+
+            //GameRestart
+            if(gameOver)
+            {
+                player.setVelocityY(0);
+                restartText.setVisible(true);
+                //console.log('Gameover,Restart Game');
+                this.time.paused=true;
+                SharkSteps.pause();
+                SharkBreath.pause();
+                MissileHover.pause();
+                Pl = 0;
+            }
+             //======================測試UPDATE=======================
+
+            //EN
+            if(this.physics.overlap(player,ENSuround)||ENStimer.getProgress()>=0.1){
+                ENPtimer.paused=true;
+                Sprint(player,ENSuround,EN,ENStimer,ENPtimer);
+            }else if(ENStimer.getProgress()<0.1){
+                patrol(EN,ENPtimer);
+                ENPtimer.paused = false;
+                    ENStimer.elapsed =0;
+                    ENStimer.paused=true;
+                }
+            if(this.physics.overlap(player,EN2Suround)||EN2Stimer.getProgress()>=0.1){
+                EN2Ptimer.paused=true;
+                Sprint(player,EN2Suround,EN2,EN2Stimer,EN2Ptimer);
+            }else if(EN2Stimer.getProgress()<0.1){
+                patrol(EN2,EN2Ptimer);
+                EN2Ptimer.paused = false;
+                    EN2Stimer.elapsed =0;
+                    EN2Stimer.paused=true;
+                }
+            if(this.physics.overlap(weaponHead,EN) && ArrowReturn.paused==true){
+                killEN(EN);
+            }
+            if(this.physics.overlap(weaponHead,EN2) && ArrowReturn.paused==true){
+                killEN(EN2);
+            }
+            
+            if(this.physics.overlap(weaponHead,missile1)){
+                hitDestroy(weaponHead,missile1);
+            }
+            if(this.physics.overlap(weaponHead,missile2)){
+                hitDestroy(weaponHead,missile2);
+            }
+            if(this.physics.overlap(weaponHead,missile3)){
+                hitDestroy(weaponHead,missile3);
+            }
+            if(this.physics.overlap(weaponHead,missile4)){
+                hitDestroy(weaponHead,missile4);
+            }
+            if(this.physics.overlap(weaponHead,missile5)){
+                hitDestroy(weaponHead,missile5);
+            }
+            if(this.physics.overlap(weaponHead,shot1)){
+                hitDestroy(weaponHead,shot1);
+            }
+            if(this.physics.overlap(weaponHead,shot2)){
+                hitDestroy(weaponHead,shot2);
+            }
+            if(this.physics.overlap(weaponHead,shot3)){
+                hitDestroy(weaponHead,shot3);
+            }
+            if(this.physics.overlap(weaponHead,shot4)){
+                hitDestroy(weaponHead,shot4);
+            }
+            if(this.physics.overlap(weaponHead,shot5)){
+                hitDestroy(weaponHead,shot5);
+            }
+            //準心跟隨
+            mouseX=this.input.x/1.4+155;
+            mouseY=this.input.y/1.4+86;
+            aim.x=mouseX;
+            aim.y=mouseY;
+            //三叉戟
+            Mouse=new Phaser.Geom.Point(this.input.x,this.input.y);
+            angle=Phaser.Math.Angle.Between(arrow.x,arrow.y,this.cameras.main.worldView.x+Mouse.x/1.4,this.cameras.main.worldView.y+Mouse.y/1.4);
+            if(arrow.exists==true){
+                arrow.x=player.x;
+                arrow.y=player.y;
+                arrow.setRotation(angle);
+                aim.setVisible(true);
+            }else{
+                aim.setVisible(false);
+            }
+            if(weapon.exists==true){
+                // console.log('weapon');
+            }
+            if(ArrowReturn.getProgress()>=0.7){
+                weaponHead.x=player.x;
+                weaponHead.y=player.y;
+            }
+            weapon.x=weaponHead.x;
+            weapon.y=weaponHead.y+7;
+            
+            if(weaponHead.y<0){
+                 ArrowReturn.paused=false;
+             }
+             if(san>150 && sanser.exists==false){
+                    s=1.25;
+                }
+
+            //BOSS
+            //追蹤飛彈追蹤效果
+            missiles.children.iterate( (child) => {
+                let missilev = Phaser.Math.Between(150, 200);
+                let angle = Math.atan2(player.y - child.y, player.x - child.x);
+                let Vx = missilev * Math.cos(angle);
+                let Vy = missilev * Math.sin(angle);
+                
+                let aa=Phaser.Math.Angle.Between(child.x,child.y,player.x,player.y);
+                child.setRotation(aa);
+                child.setVelocity(Vx, Vy);
+                
+            })
+                // 文字測試
+                    // if(re==true){console.log('true'); this.add.text(300,150,'re:true',{backgroundColor:'rgba(0,0,0,0.4)',color:'white'}).setScrollFactor(0);}
+                    // else{this.add.text(160,150,'re:false',{backgroundColor:'rgba(0,0,0,0.4)',color:'white'}).setScrollFactor(0);}
+                // if(EN.exists==false && EN2.exists==false){BOSS()};
+            //觸發條件
+            if(showboss==false && EN.exists==false && EN2.exists==false){
+                BOSS.call(this);
+            }
+            //BOSS死亡停止攻擊
+            if(bossDead){
+                att.paused=true;
+                att2.paused=true;
+                att3.paused=true;
+                att4.paused=true;
+                att5.paused=true;
+                tags.setVisible(false);
+            }
+        }//UPDATE END
+      
+    </script>
+    
+</body>
+</html>

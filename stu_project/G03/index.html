@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.52.0/dist/phaser.min.js"></script>
+
+    <style type="text/css">
+        body
+        {
+            
+            margin:0;
+            padding:0;
+        }
+
+    </style>
+</head>
+<body>
+    <script>
+        const config = 
+        {
+            type   : Phaser.AUTO,
+            width  : 1066,
+            height : 600,
+            
+            
+
+            physics: 
+            {
+                default: 'arcade',
+                arcade : 
+                {
+                    gravity: {y: 500},
+                    debug: false
+                }
+            },
+
+            scene  : 
+            {
+                preload: preload,
+                create : create,
+            }
+        };
+
+        const game = new Phaser.Game(config);
+
+        //let
+        let img;
+        let start;
+
+        function preload(){
+            //__________________圖片_______________________________
+            this.load.image('bg','assets/Background_LogIn.png');
+            this.load.image('GURA','assets/GURA_LogIn.png');
+            this.load.image('Title','assets/GURA_Name.png');
+            this.load.image('Start','assets/GURA_Start.png');
+            //_____________________音效__________________________________
+            this.load.audio("Music" ,['assets/Background_2.mp3']);
+            this.load.audio("A"     ,['assets/Gura_a.mp3']);
+
+        }
+        function create(){
+            //____________________________________建立物件__________________________________________
+            bg= this.add.image(config.width/2,config.height/2,'bg').setScale(0.8);
+            
+            Gura = this.add.image(config.width/2,1025,'GURA').setScale(0.4);
+            
+            Title = this.add.image(config.width/2,1025,'Title').setScale(0.8).setAlpha(0.4);
+            
+            start = this.add.image(config.width/2,config.height/2,'Start').setOrigin(0.5).setScale(0.6).setVisible(false);
+            
+            //______________________________________音效________________________________________________
+            BackgroundMusic = this.sound.add("Music",
+            {
+                loop:true,
+                volume:0.8
+            
+            });
+            Aa = this.sound.add("A",{loop: false}); 
+            BackgroundMusic.play();
+            
+
+            //____________________________________接關_______________________________________________
+            start.setInteractive().on('pointerdown',()=>{
+                this.cameras.main.fadeOut(1000);
+                
+                this.time.addEvent(
+                {
+                    loop:false,
+                    delay:1000,
+                    callback:function()
+                    {
+                        window.close('Menu.html');
+                        window.open('Stage_1.html');
+                    },
+                    callbackScope: this
+                });
+                
+               
+            })
+            //______________________________________攝影機______________________________________________
+            this.cameras.main.setSize(1066, 600);
+            this.cameras.main.setZoom(2);
+            this.cameras.main.zoomTo(1,1000);
+            //_____________________________________動畫_________________________________________________
+            Title.scene.tweens.add(
+            {
+                targets: Title,
+                scaleX:0.8,
+                scaleY:0.8,
+                y:325,
+                alpha:1,
+                ease:'Linear',
+                duration:1000,
+                repeat:0,
+                yoyo:false
+            });
+            
+            Gura.scene.tweens.add(
+            {
+                targets: Gura,
+                scaleX:1,
+                scaleY:1,
+                y:config.height/2+50,
+                alpha:1,
+                ease:'Linear',
+                duration:800,
+                delay:200,
+                repeat:0,
+                yoyo:false,
+                onComplete:()=>
+                {
+                    Aa.play();
+                    Gura.scene.tweens.add(
+                    {
+                        targets: Gura,
+                        scaleX:0.8,
+                        scaleY:0.8,
+                        y:config.height/2+50,
+                        alpha:1,
+                        ease:'Linear',
+                        duration:300,
+                        repeat:0,
+                        yoyo:false,
+                        onComplete:()=>
+                        {
+                            Gura.scene.tweens.add(
+                            {
+                                targets: Gura,
+                                scaleX:0.8,
+                                scaleY:0.8,
+                                y:config.height/2+50,
+                                alpha:1,
+                                rotation:0.05,
+                                ease:'Elastic',
+                                duration:5000,
+                                repeat:-1,
+                                yoyo:true,
+                            });
+                            start.setVisible(true); 
+                        }       
+                    });
+                }
+            });
+
+            start.scene.tweens.add(
+            {
+                targets: start,
+                scaleX:0.6,
+                scaleY:0.6,
+                alpha:0,
+                ease:'Linear',
+                duration:600,
+                repeat:-1,
+                yoyo:true
+            });
+
+
+        }
+        </script>
+
+</body>
+</html>
