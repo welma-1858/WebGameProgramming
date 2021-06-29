@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>《FALLEN KITTIES》遊戲企劃</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom styles for this template -->
+    <link href="../../../css/stu.css" rel="stylesheet">
+    
+    <!-- Custom fonts for this template -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    <link href="../../../vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet" type="text/css">
+    
+    <!--web font-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC:300,400,500,700,900&display=swap" rel="stylesheet">
+   
+    <!-- slick slideshow -->
+		<link rel="stylesheet" type="text/css" href="../../../css/slick/slick-theme.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/slick/slick.css"/>
+		
+		<style>
+			.parallax {
+				/* The image used */
+				background-image: url(img/G12.jpg);
+
+				/* Full height */
+				height: 300px;
+
+				/* Create the parallax scrolling effect */
+				background-attachment: fixed;
+				background-position: center;
+				background-repeat: no-repeat;
+				background-size: cover;
+			}
+		</style>
+		
+  
+</head>
+
+<body>
+     
+<!-- Navigation -->
+<div id="navbar">
+  <h1><a href="#" id="logo">《第十二組：FALLEN KITTIES》遊戲企劃</a><a id="navbar-right" href="../../../index.html"><i class="fas fa-home"></i> 回首頁</a></h1>
+	<h2 class="pl-4 m-0">1081804 陳怡安｜1081851 洪佳妤｜1082011 王晨｜1082028 李汶儒</h2>
+</div>
+   
+
+<section class="container content0">
+	<div class="row p1_1">
+  	<div class="col-12 px-0 mb-5">
+  		<h1 class="px-3 mb-4">遊戲介紹</h1>
+  		<button class="collapsible">遊戲主題</button>
+			<div class="content">
+				<p class="p-4 m-0">一款貓咪療癒小遊戲</p>
+			</div>
+			<button class="collapsible mt-3">提案動機</button>
+			<div class="content">
+				<p class="p-4 m-0">想製作一款輕鬆休閒可愛的遊戲，於是想到了天上有貓咪掉下來的點子 。</p>
+			</div>
+			<button class="collapsible mt-3">遊戲說明</button>
+			<div class="content">
+				<p class="p-4 m-0">操縱角色利用箱子接住貓咪，同時要避開場景中出現的障礙以及各種陷阱。<br>遊戲結束後可以在家中以及圖鑑看到已蒐集貓咪的資訊 。</p>
+			</div>			
+  	</div>
+  	<div class="col-12 px-0 mb-5   ">
+  		<h1 class="px-3 mb-4">遊戲內容</h1>
+  		<button class="collapsible">遊戲故事</button>
+			<div class="content">
+				<p class="p-4 m-0">接到對應的貓咪會開啟對應的圖鑑內容，圖鑑內會顯示各種貓咪的資訊，每隻貓都會有幾篇小故事，需抓到一定數量才會依序解鎖故事內容，圖鑑內也會顯示每種貓咪所抓到的數量。</p>
+			</div>
+			<button class="collapsible mt-3">遊戲玩法</button>
+			<div class="content">
+				<p class="p-4 m-0">利用wasd 移動 利用滑鼠點擊天上出現的泡泡獲取更多分數所有物件的速度都會隨著遊戲時間越來越快被障礙擠出畫面以及碰到特定物品遊戲結束。</p>
+			</div>
+			<button class="collapsible mt-3">遊戲任務</button>
+			<div class="content">
+				<p class="p-4 m-0">拯救從空中掉落的貓咪。</p>
+			</div>
+			<button class="collapsible mt-3">遊戲目標</button>
+			<div class="content">
+				<p class="p-4 m-0">獲得高分蒐集各品種貓咪並完成圖鑑蒐藏。</p>
+			</div>
+			<button class="collapsible mt-3">遊戲規則</button>
+			<div class="content">
+				<p class="p-4 m-0">不要碰到急死物件EX:滾木、鳥、點擊巧克力、以及超出螢幕範圍。</p>
+			</div>
+						
+  	</div>
+  </div>
+</section>
+	
+<section class="container-fluid parallax">
+</section>    
+
+<section class="container content1">
+	<div class="row p1_1">
+  	<div class="col-12 px-0 mb-5   ">
+  		<h1 class="px-3 mb-4">遊戲架構</h1>
+  		<button class="collapsible">遊戲流程設計</button>
+			<div class="content">
+				<p class="p-4 m-0"><img class="img-fluid" src="img/stu_process.jpg"></p>
+			</div>
+			<button class="collapsible mt-3">遊戲腳本設計</button>
+			<div class="content">
+				<ul class="p-4 m-0">
+					<li>起始畫面<br><img src="img/c01.jpg" class="img-fluid"></li>
+					<li>貓舍<br><img src="img/c02.jpg" class="img-fluid"></li>
+					<li>背景音樂<br><img src="img/c03.jpg" class="img-fluid"></li>
+				</ul>
+			</div>
+			<button class="collapsible mt-3">遊戲關卡設計</button>
+			<div class="content">
+				<p class="p-4 m-0">遊戲狀態主要依以下兩個數值做判斷:分數（score）、計時器（timer）<br>timer為每一幀+1<br>遊戲上方UI顯示的當前分數為score加上<br>timer/20（時間加成）<br>timer除了有分數加乘，也對影響獲得分數時的倍率計算 倍率為1+timer/7200</p>
+				<table class="p-4 m-3">
+					<tr>
+						<td>道具：<br>只要達成條件後就會持續生成，每個道具的效果不同 也會有些帶有及死效果。泡泡為特殊道具，需用滑鼠點擊才會觸發，角色碰觸到不會有效果</td>
+						<td><img src="img/stu_leveldesign01.jpg" class="img-fluid"></td>
+						<td>障礙物：<br>總共有四個階段的設計，遊戲內計時器（timer）時間只要一到設定的值就會進到下一階段。</td>
+						<td><img src="img/stu_leveldesign02.jpg" class="img-fluid"></td>
+						<td>貓咪：<br>的生成會依目前獲得分數（score）判定（未加上時間加成的分數），一次最多出現三種街道貓咪後會將總捕獲數量加到陣列中，以便在家中以及圖鑑顯示</td>
+						<td><img src="img/stu_leveldesign03.jpg" class="img-fluid"></td>
+					</tr>
+				</table>
+			</div>			
+  	</div>
+  	<div class="col-12 px-0 mb-5   ">
+  		<h1 class="px-3 mb-4">遊戲美術</h1>
+  		<button class="collapsible">遊戲場景</button>
+			<div class="content showalt_rele">
+				<div class="row p-4">
+					<div class="col-6 p-1">
+						<p>起始畫面</p>
+						<img src="img/000.jpg" class="py-1 img-fluid">
+					</div>
+					<div class="col-6 p-1">
+						<p>貓舍</p>
+						<img src="img/003.jpg" class="py-1 img-fluid">
+					</div>
+					<div class="col-6 p-1">
+						<p>圖鑑</p>
+						<img src="img/001.jpg" class="py-1 img-fluid">
+					</div>
+					<div class="col-6 p-1">
+						<p>遊戲畫面</p>
+						<img src="img/0000.jpg" class="py-1 img-fluid">
+					</div>
+				</div>
+			</div>
+			<button class="collapsible mt-3">遊戲元素</button>
+			<div class="content">
+				<div class="row p-4">
+					<div class="col-6 p-1">
+						<img src="img/006.jpg" class="py-1 img-fluid">
+					</div>
+					<div class="col-6 p-1">
+						<img src="img/002.jpg" class="py-1 img-fluid">
+					</div>
+					<div class="col-6 p-1">
+						<img src="img/008.jpg" class="py-1 img-fluid">
+					</div>
+					<div class="col-6 p-1">
+						<img src="img/007.jpg" class="py-1 img-fluid">
+					</div>
+				</div>
+			</div>
+			<button class="collapsible mt-3">遊戲音效</button>
+			<div class="content">
+				<ul class="py-4 m-0">
+					<li>背景音樂<br>遊戲起始畫面：play with me.mp3<br>貓舍＆圖鑑畫面：strawberry flavor love.mp3<br>遊戲音樂：Sand Castle.mp3</li>
+					<li>圖鑑翻書聲</li>
+					<li>貓咪叫聲 x 3</li>
+					<li>點燃引線聲（炸彈貓使用）</li>
+				</ul>
+			</div>			
+  	</div>  	
+  	<div class="col-12 px-0 mb-5">
+  		<h1 class="px-3 mb-4">時程規劃</h1>
+  		<div class="p3_1">
+  			<div class="p-4 m-0"><img src="img/schedual.jpg" class="img-fluid"></div>
+  		</div>
+  	</div>
+  	<div class="col-12 px-0 mb-5">
+  		<h1 class="px-3 mb-4">小組分工</h1>
+  		<div class="p3_1">
+				<div>
+					<ul class="py-4 m-0">
+						<li>程式 : 王晨、李汶儒</li>
+						<li>美術 : 洪佳妤、陳怡安</li>
+						<li>企劃 : 共同規劃</li>
+					</ul>
+				</div>
+  		</div>
+  	</div>
+  </div>
+</section>
+
+	
+<footer></footer>
+	
+<!-- AOS -->
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+  AOS.init();
+
+
+// Scroll to specific values
+// scrollTo is the same
+window.scroll({
+  top: 2500, 
+  left: 0, 
+  behavior: 'smooth'
+});
+
+// Scroll certain amounts from current position 
+window.scrollBy({ 
+  top: 100, // could be negative value
+  left: 0, 
+  behavior: 'smooth' 
+});
+
+// Scroll to a certain element
+document.querySelector('.hello').scrollIntoView({ 
+  behavior: 'smooth'
+});
+</script>		
+    
+
+<!-- Bootstrap core JavaScript -->
+<script src="../../../vendor/jquery/jquery.min.js"></script>
+<script src="../../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    
+<!-- Plugin JavaScript --> 
+<script src="../../../vendor/jquery-easing/jquery.easing.min.js"></script> 
+<script src="../../../js/scrolling-nav.js"></script>
+    
+    
+<!-- Lazyload JavaScript -->    
+<script src="../../../js/lazysizes.min.js" async></script>
+
+
+    
+<!-- Nav Hide/Show    
+<script>
+var didScroll;
+var lastScrollTop = 0;
+var delta = 5;
+var navbarHeight = $('.header').outerHeight();
+
+$(window).scroll(function(event){
+    didScroll = true;
+});
+
+setInterval(function() {
+    if (didScroll) {
+        hasScrolled();
+        didScroll = false;
+    }
+}, 250);
+
+function hasScrolled() {
+    var st = $(this).scrollTop();
+    
+    // Make sure they scroll more than delta
+    if(Math.abs(lastScrollTop - st) <= delta)
+        return;
+    
+    // If they scrolled down and are past the navbar, add class .nav-up.
+    // This is necessary so you never see what is "behind" the navbar.
+    if (st > lastScrollTop && st > navbarHeight){
+        // Scroll Down
+        $('.header').removeClass('nav-down').addClass('nav-up');
+    } else {
+        // Scroll Up
+        if(st + $(window).height() < $(document).height()) {
+            $('.header').removeClass('nav-up').addClass('nav-down');
+        }
+    }
+    
+    lastScrollTop = st;
+}
+</script> -->
+
+
+
+<!-- Show Img Alt -->      
+<script>
+  $(".showalt").each(function() {
+    $(this).after('<p class="alt">' + $(this).attr('alt') + '</p>');
+  })
+</script>
+
+<!-- scroll navbar -->
+<script>
+// When the user scrolls down 80px from the top of the document, resize the navbar's padding and the logo's font size
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+    document.getElementById("navbar").style.padding = "20px 10px";
+    document.getElementById("logo").style.fontSize = "25px";
+  } else {
+    document.getElementById("navbar").style.padding = "80px 10px";
+    document.getElementById("logo").style.fontSize = "35px";
+  }
+}
+</script>
+
+
+
+<!-- slick slideshow -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="js/slick.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.slider-for').slick({
+				slidesToShow: 1,
+				slidesToScroll: 1,
+				arrows: false,
+				fade: true,
+				asNavFor: '.slider-nav'
+			});
+			$('.slider-nav').slick({
+				slidesToShow: 3,
+				slidesToScroll: 1,
+				asNavFor: '.slider-for',
+				dots: true,
+				centerMode: true,
+				focusOnSelect: true
+			});
+		
+		$('.p3_slick').slick({
+			slidesToShow: 3,
+			slidesToScroll: 1,
+			autoplay: true,
+			autoplaySpeed: 2000,
+		});
+      
+  });
+</script>	
+
+<!-- 收起展開的目錄 -->
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    } 
+  });
+}
+</script>
+
+
+
+
+
+</body>
+
+</html>
