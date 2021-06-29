@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="img/icon.ico" rel="shortcut icon"/>
+    <title>Eat Credit Ball</title>
+    
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+    <script src="assets/phaser.min.js"></script>
+    <script src="sceneOne.js"></script>
+    <script src="sceneTwo.js"></script>
+    <script src="sceneThree.js"></script>
+    <script src="index_one.js"></script>
+    <script src="over.js"></script>
+</head>
+
+<body>
+    <script>
+        const config = {
+            type: Phaser.AUTO,
+            width: 1500,
+            height: 800,
+            backgroundColor: "#DDDDDD",
+            scale: {
+                mode: Phaser.Scale.FIT,
+                autoCenter: Phaser.Scale.CENTER_BOTH,
+            },
+            physics: {
+                default: 'arcade',
+                arcade: {}
+            },
+            scene: [index_one, sceneOne, sceneTwo, sceneThree, over]
+        };
+        const game = new Phaser.Game(config);
+        //---砲車
+        let fort;
+        let fort1;
+        let fort2;
+        let fort3;
+        let fort4;
+        let delay = 200;
+        let nextshot = 0;
+        let gametime = 0;
+        //---砲車球
+        let fortball;
+        //---人物
+        let attack;
+        let player;
+        let platforms;
+        let cursors;
+        let walls;
+        let disable;
+        var score;
+        let scoreText;
+        let timeText;
+        let winText;
+        let restartText;
+        let timedEvent;
+        let moveup = false;
+        let movedown = false;
+        let movetime;
+        //---齒輪
+        let obstacle;
+        let obstacle1;
+        let obstacle2;
+        let obstacle3;
+        let obstacle4;
+        let obstacle5;
+        let obstacle6;
+        let obstacle7;
+        let obstacle8;
+        let obstacle9;
+        let obstacle10;
+        let obstacle11;
+        //--學分
+        let Checkpoint;
+        let restartball = false;
+        var scoreball = [];
+        let scoreball1;//加1
+        let scoreball2;//加2
+        let scoreball3;//加3
+        let scoreball4;//減2
+        let scoreball5;//加時間
+        let scoreball6;//加速
+        let scoreball7;//減時間
+        let scoreball8;//減速
+        let scoreball9;//無敵
+        let Invincible=false;
+        let flame;
+        let flame1;
+        let flame2;
+        let flame3;
+        let flameTween;
+        let flameTween1;
+        let flameTween2;
+        let flameTween3;
+        let flame4,flameTween4;
+        let Invincibletime;
+        let rdn;
+        let positionx;
+        let positiony;
+        let gameOver = false;
+        let shoot = true;
+        let direction = 3;
+        let particles;
+        //--首頁
+        let startBtn;
+        let goto;
+        let title;
+        let Re;
+        let Re2;
+        let Re3;
+        let startTitle;
+        let restarBtn;
+        //保存關卡分數
+        let onescore;
+        let twoscore;
+        //音樂
+        var sound;
+        var Fortmusic;
+        var Attackwalls;
+        var eatscore;
+        var bad;
+        var Attackmusic;
+        var success;
+        var unsuccess;
+        var button1;
+        var button2;
+        var star;
+        let bg1;
+        let bg2;
+    </script>
+</body>
+
+</html>
